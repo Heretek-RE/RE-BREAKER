@@ -134,7 +134,7 @@ def get_debug_directory(path: str) -> dict:
     shape for hosts that don't have the new MCP tool
     installed.
 
-    See ``See the RE-AI output directory.
+    See ``See the RE-AI output directory
     per-target/p3r/stage5-pogo-debug-check.md`` for the
     canonical Pattern A-DW detection pattern.
     """

@@ -829,7 +829,7 @@ def categorize_strings(
 
     Returns a JSON-serializable dict with the schema documented in
     ``docs/MCP_SERVERS.md`` (and the plan file at
-    ``/home/john/.claude/plans/./docs/``).
+    `./docs/`).
     """
     # Import here to avoid a top-level import cycle on first MCP
     # server load (the categorizer pulls in pyyaml).
@@ -1041,7 +1041,7 @@ def _rva_to_file_offset_stdlib(sections: list[tuple[str, int, int, int]], rva: i
     # mapping for the IMAGE_OPTIONAL_HEADER-resident data
     # directories. The debug data directory's RVA *is* in
     # this range for many binaries but for our VM-protected
-    # targets (007FL/P3R/CD/TWW3) it's in a far-away section.
+    # targets it is often in a far-away section.
     if 0 <= rva < 0x1000:
         return rva
     return -1

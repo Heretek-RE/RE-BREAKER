@@ -177,7 +177,7 @@ def _call_lief_scan(path: str, max_per_category: int) -> dict:
     short-circuited to `error: 're-lief not found'`. The correct
     depth is parents[3] (servers/) → servers/re-lief/src. Confirmed
     by the r03-stress run: correlate_anti_patterns returned
-    score=0 on all 17 binaries across LIR/P3R/CD/APK because of
+    score=0 on all binaries across representative targets because of
     this single path bug.
     """
     try:

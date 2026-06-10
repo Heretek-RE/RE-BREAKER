@@ -160,8 +160,8 @@ def _download(url: str) -> dict:
             "reason": f"connection failed: {exc}",
         }
     # A16 fix (v2.8.0): reclassify HTTP 404 from "ERROR" to a clearer
-    # "not_found" status. Per r03-stress, publishers (Atlus for P3R,
-    # Pearl Abyss for CD's shielding PDB) don't publish their internal
+    # "not_found" status. Per stress testing, some publishers
+    # do not publish their internal
     # PDBs to the Microsoft Symbol Server — 404 is the EXPECTED
     # response for any shipped commercial game binary, not a tool
     # error. The "ERROR" label was misleading the agent into thinking
