@@ -1,0 +1,10 @@
+{
+  "_comment": "Steam AppID table. The auto-detect path (read steam_api64.dll.orig's first 4 KB) is the primary source; this table is the fallback for known targets.",
+  "fm26": "https://store.steampowered.com/app/TBD",
+  "hkia": "70503",
+  "007fl": "TBD",
+  "tww3": "1142710",
+  "p3r": "TBD",
+  "lir": null,
+  "cd": "TBD"
+}

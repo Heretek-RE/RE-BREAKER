@@ -1,0 +1,2 @@
+# Per-server Python venv (managed by uv; never committed)
+.venv/

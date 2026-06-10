@@ -1,0 +1,56 @@
+{
+  "fm26": {
+    "sow": "M",
+    "exe": "fm.exe",
+    "dir_name": "Football Manager 26",
+    "layers": ["steam_ceg", "eos", "sega_sso"],
+    "notes": "Football Manager 26 (SEGA / Sports Interactive). Cinematic wall at v0.4.1.9."
+  },
+  "hkia": {
+    "sow": "N",
+    "exe": "HelloKittyIslandAdventure.exe",
+    "dir_name": "Hello Kitty Island Adventure",
+    "appid": "70503",
+    "layers": ["steam_ceg", "sunblink"],
+    "notes": "Hello Kitty Island Adventure (Sunblink). Server-reachability dialog blocks main menu."
+  },
+  "007fl": {
+    "sow": "L",
+    "exe": "007FirstLight.exe",
+    "dir_name": "007 First Light",
+    "layers": ["steam_ceg", "ioi"],
+    "notes": "007 First Light (IO Interactive). Hits Wine cryptasn SPC page fault."
+  },
+  "tww3": {
+    "sow": "Q",
+    "exe": "Warhammer3.exe",
+    "dir_name": "Total War WARHAMMER III",
+    "appid": "1142710",
+    "layers": ["steam_ceg", "eos"],
+    "notes": "Total War: WARHAMMER III (CA / Microsoft). Hits Wine SEH invalid frame from 18 VMCALL sites (CA Clockwork)."
+  },
+  "p3r": {
+    "sow": "P",
+    "exe": "P3R.exe",
+    "dir_name": "P3R",
+    "layers": ["steam_ceg", "atlus"],
+    "denuvo_check": "phase-1",
+    "denuvo_carveout": true,
+    "notes": "Persona 3 Reload (SEGA / Atlus). UE5 + custom ATD (Denuvo-style carve-out per SOW-P §P.1). WinInet 12029 retry loop."
+  },
+  "lir": {
+    "sow": null,
+    "exe": "Lost In Random.exe",
+    "dir_name": "lost-in-random",
+    "layers": ["origin"],
+    "notes": "Lost In Random (EA / stress-test only, no SOW). .orig pollution from prior failed patcher run; needs full Origin client-stack emulator."
+  },
+  "cd": {
+    "sow": "O",
+    "exe": "CrimsonDesert.exe",
+    "dir_name": "Crimson_Desert_Deluxe_Edition",
+    "layers": ["steam_ceg", "pa"],
+    "denuvo_check": "phase-1",
+    "notes": "Crimson Desert (Pearl Abyss). BlackSpace engine + Denuvo. Steam CEG layer defeated via gbe_fork; Denuvo hypervisor bypass via DenuvOwO (RE-only on Wine)."
+  }
+}

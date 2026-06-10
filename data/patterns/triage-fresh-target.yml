@@ -1,0 +1,26 @@
+name: triage-fresh-target
+source: skills/re-triage-fresh-target/SKILL.md
+version: 0.3.0
+when_to_use: Target has no prior analysis (no honest-read triage.json)
+target_class: Any binary; the .exe / .dll / .so to triage from scratch
+catalog_entry: n/a (workflow, not a technique)
+expected_runtime_minutes: 2
+success_probability: 0.95
+tools:
+- re-triage
+- re-catalog-match
+- re-anti-analysis-scan
+- re-static-triage
+steps:
+- step: 1
+  tool: re-triage
+  action: Run re-triage on the target binary
+  purpose: compute sections, primitive counts, per-site RVAs, hypervisor posture
+- step: 2
+  tool: re-catalog-match
+  action: Run catalog match against the fresh triage
+  purpose: rank catalog entries by defender-side confidence
+- step: 3
+  tool: re-bypass-pattern-X
+  action: Continue with the per-Pattern playbook
+  purpose: Per-Pattern bypass orchestration (planning layer)

@@ -1,0 +1,407 @@
+{
+  "_meta": {
+    "version": 2,
+    "last_updated": "2026-06-07",
+    "purpose": "Vendored, normalized subset of public anti-analysis primitive APIs + byte sequences used by the re-anti-analysis MCP server. Vendor-neutral: categories only, no product or vendor names.",
+    "arch_default": ["x86", "x86_64"],
+    "arch_default_note": "A15 fix (v2.8.0): every entry is implicitly scoped to x86/x86_64 unless an explicit `archs` field overrides it. The disasm pass in re-anti-analysis must skip x86-only entries when the target binary is AArch64/ARM32/etc. (the r03-stress APK pass produced 306 false-positive INT-3 hits on libproot.so/libzstd-jni because the x86 byte-pattern catalog was applied to AArch64 binaries).",
+    "category_legend": {
+      "anti_debug": "Primitives the binary uses to detect or interfere with debuggers (user-mode only).",
+      "anti_attach": "Primitives that prevent or detect a debugger attaching to the running process.",
+      "anti_vm": "Primitives the binary uses to detect a virtual machine (CPUID leaves, hypervisor bits, ACPI/SMBIOS probes).",
+      "anti_emulator": "Primitives that detect a CPU emulator (QEMU, Unicorn, Speakeasy) by timing skew, missing CPUID leaves, or behavior.",
+      "anti_sandbox": "Primitives that detect a sandbox (CAPE, Triage, Joe Sandbox) by file/process/registry/user-interaction probes.",
+      "process_introspection": "Primitives that read the host's process list, handle table, or module list.",
+      "memory_integrity": "Primitives that read or verify the integrity of the process's own memory (text-section hashing, self-checksumming).",
+      "code_integrity": "Primitives that install hook detection, IAT patching detection, or inline-hook detection."
+    },
+    "evidence_legend": {
+      "api_name": "API name appears in the binary's string table (string_only confirmation per anti_debug_indicators).",
+      "import": "API is in the IAT (import_only confirmation).",
+      "byte_sequence": "A canonical byte sequence (e.g. 0F 31 for RDTSC). Requires disasm to count.",
+      "symbol": "A debug symbol or string literal (e.g. /prodid, MachineGuid)."
+    },
+    "source_credits": [
+      "https://github.com/fr0gger/unprotect (open catalog of anti-analysis APIs)",
+      "https://github.com/CheckPointSW/Anti-Debug-DB (machine-readable Windows anti-debug DB)",
+      "https://github.com/kernelwernel/VMAware (cross-platform VM-detection primitives)",
+      "https://github.com/void-stack/Hypervisor-Detection (Windows hypervisor-detection primitives)"
+    ]
+  },
+  "entries": [
+    {
+      "id": "ad-001",
+      "category": "anti_debug",
+      "primitive": "IsDebuggerPresent",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "PEB.BeingDebugged reader; the canonical user-mode anti-debug primitive. Single-primitive match in isolation is high-FP (debug-build heuristics); requires co-occurrence with another ad-* primitive to be a real signal."
+    },
+    {
+      "id": "ad-002",
+      "category": "anti_debug",
+      "primitive": "CheckRemoteDebuggerPresent",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Cross-process debugger detection via kernel32."
+    },
+    {
+      "id": "ad-003",
+      "category": "anti_debug",
+      "primitive": "NtQueryInformationProcess",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Used with ProcessDebugPort / ProcessDebugObjectHandle / ProcessDebugFlags to detect debug attach."
+    },
+    {
+      "id": "ad-004",
+      "category": "anti_debug",
+      "primitive": "OutputDebugStringW",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Often used as a debugger-attach tripwire (debugger receives the string; non-debugger context silently swallows it)."
+    },
+    {
+      "id": "ad-005",
+      "category": "anti_debug",
+      "primitive": "RDTSC",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "0F 31",
+      "platforms": [
+        "x86",
+        "x86_64"
+      ],
+      "note": "Read time-stamp counter. High-FP in isolation (legit timing code); counted as anti-debug only when paired with a spin loop and a debugger-presence check."
+    },
+    {
+      "id": "ad-006",
+      "category": "anti_debug",
+      "primitive": "INT 2D",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "CD 2D",
+      "platforms": [
+        "x86",
+        "x86_64"
+      ],
+      "note": "Debug exception that fires only under a debugger (the kernel delivers DBG_PRINTEXCEPTION_C). The native code path is a no-op; the debugger path increments RIP past the next instruction."
+    },
+    {
+      "id": "ad-007",
+      "category": "anti_debug",
+      "primitive": "INT 3",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "CC",
+      "platforms": [
+        "x86",
+        "x86_64"
+      ],
+      "note": "Software breakpoint opcode. Patched into target by debuggers; presence in a code path that is *not* a known debug stub is a strong anti-debug signal."
+    },
+    {
+      "id": "ad-008",
+      "category": "anti_debug",
+      "primitive": "PEB.BeingDebugged",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "64 A1 30 00 00 00",
+      "platforms": [
+        "x86"
+      ],
+      "note": "Direct read of the PEB.BeingDebugged byte at fs:[0x30] + 2. Common in encrypted-VM dispatchers that want to avoid importing IsDebuggerPresent."
+    },
+    {
+      "id": "ad-009",
+      "category": "anti_debug",
+      "primitive": "PEB.NtGlobalFlag",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "64 8B 05 30 00 00 00 83 78 68 70",
+      "platforms": [
+        "x86"
+      ],
+      "note": "Direct read of the PEB.NtGlobalFlag dword (fs:[0x30] + 0x68). Set by the kernel to 0x70 when the process is created under a debugger."
+    },
+    {
+      "id": "ad-010",
+      "category": "anti_debug",
+      "primitive": "DebugActiveProcess",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Anti-anti-debug side: enumerate debuggers attached by walking the process-debug-object handle table."
+    },
+    {
+      "id": "ad-011",
+      "category": "anti_attach",
+      "primitive": "NtCreateDebugObject",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Create the debug object that NtDebugActiveProcess requires. If the call returns a non-NULL handle, the process is being debugged."
+    },
+    {
+      "id": "ad-012",
+      "category": "anti_attach",
+      "primitive": "NtDebugContinue",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Resume from a debug exception without yielding control to the debugger. High-FP in isolation."
+    },
+    {
+      "id": "av-001",
+      "category": "anti_vm",
+      "primitive": "CPUID.1.ECX hypervisor present bit",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "0F A2",
+      "platforms": [
+        "x86",
+        "x86_64"
+      ],
+      "note": "CPUID leaf 1 ECX bit 31 = 1 when running under a hypervisor. Cross-platform standard VM-detection primitive."
+    },
+    {
+      "id": "av-002",
+      "category": "anti_vm",
+      "primitive": "CPUID.0x40000000 hypervisor vendor signature",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "0F A2",
+      "platforms": [
+        "x86",
+        "x86_64"
+      ],
+      "note": "CPUID leaf 0x40000000 returns the hypervisor vendor signature (e.g. 'Microsoft Hv', 'VMwareVMware', 'KVMKVMKVM', 'TCGTCGTCGTCG'). Note: signature strings are excluded from this catalog; only the opcode is recorded."
+    },
+    {
+      "id": "av-003",
+      "category": "anti_vm",
+      "primitive": "RDTSC timing skew",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "0F 31",
+      "platforms": [
+        "x86",
+        "x86_64"
+      ],
+      "note": "TSC skew between two back-to-back RDTSCs is a strong VM-detection signal (emulators and some hypervisors introduce 10-100x slowdown on the second read)."
+    },
+    {
+      "id": "av-004",
+      "category": "anti_vm",
+      "primitive": "VMXON/VMCALL instruction presence",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "0F C7",
+      "platforms": [
+        "x86_64"
+      ],
+      "note": "VMXON and VMCALL are ring 0 in real hardware. Their presence in userland code is a hypervisor-detection or hypervisor-deployment primitive (anti-RE/anti-cheat use case)."
+    },
+    {
+      "id": "av-005",
+      "category": "anti_vm",
+      "primitive": "SMBIOS string probe",
+      "evidence_kind": "symbol",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "note": "Reads SMBIOS tables and looks for vendor strings (e.g. 'VMware', 'QEMU', 'Microsoft Corporation'). Note: signature strings are excluded from this catalog; only the SYMBOL token is recorded."
+    },
+    {
+      "id": "av-006",
+      "category": "anti_vm",
+      "primitive": "ACPI table probe",
+      "evidence_kind": "symbol",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "note": "Reads ACPI tables (\\\\.\\\\ACPI#...) to detect virtual hardware. Often paired with SMBIOS probe (av-005)."
+    },
+    {
+      "id": "av-007",
+      "category": "anti_vm",
+      "primitive": "\\\\.\\PhysicalDrive access",
+      "evidence_kind": "symbol",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Open \\\\.\\\\PhysicalDrive0 to read disk serial. The disk-serial string is one of the canonical VM-fingerprinting primitives (the VM's serial is often a known constant)."
+    },
+    {
+      "id": "av-008",
+      "category": "anti_vm",
+      "primitive": "HKLM\\\\SOFTWARE\\\\VMware registry probe",
+      "evidence_kind": "symbol",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Reads HKLM\\\\SOFTWARE\\\\VMware to detect VMware Tools / VMware hypervisor. Note: this is the Windows-side catalog of a single hypervisor; the analyst's job is to map the category to the *current* target."
+    },
+    {
+      "id": "av-009",
+      "category": "anti_vm",
+      "primitive": "MAC address vendor prefix probe",
+      "evidence_kind": "symbol",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "note": "Reads the NIC's MAC address and checks against the IEEE OUI database for known VM-assigned prefixes (00:0C:29 = VMware, 00:1C:14, 08:00:27 = QEMU/KVM). Note: OUI prefixes are excluded from this catalog; only the SYMBOL token is recorded."
+    },
+    {
+      "id": "ae-001",
+      "category": "anti_emulator",
+      "primitive": "Sleep(INFINITE) blocking",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Sleep(INFINITE) hangs the emulator (no timeout). Anti-emulator primitive; in a real process the call returns when the system is shut down."
+    },
+    {
+      "id": "ae-002",
+      "category": "anti_emulator",
+      "primitive": "CPUID.0x40000100 leaf missing",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "0F A2",
+      "platforms": [
+        "x86",
+        "x86_64"
+      ],
+      "note": "Reads CPUID leaf 0x40000100; QEMU and Unicorn return 0 in EAX/EBX/ECX/EDX, real hardware returns the leaf-specific value. Cheap anti-emulator primitive."
+    },
+    {
+      "id": "ae-003",
+      "category": "anti_emulator",
+      "primitive": "GetModuleHandle(\"ntdll.dll\") IAT check",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Iterate the IAT of ntdll.dll and look for hooks. Emulators often present a stub IAT; real Windows has the full set."
+    },
+    {
+      "id": "as-001",
+      "category": "anti_sandbox",
+      "primitive": "GetCursorPos / GetForegroundWindow inactivity check",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Sleep + read cursor position; if unchanged after a long sleep, the process is in a sandbox (no human interaction)."
+    },
+    {
+      "id": "as-002",
+      "category": "anti_sandbox",
+      "primitive": "Cuckoo / CAPE pipe detection",
+      "evidence_kind": "symbol",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Looks for the Cuckoo / CAPE pipe path. Note: the Cuckoo path string is excluded from this catalog; only the SYMBOL token is recorded."
+    },
+    {
+      "id": "as-003",
+      "category": "anti_sandbox",
+      "primitive": "username / computername short-string check",
+      "evidence_kind": "symbol",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Reads the username + computername via GetUserNameW + GetComputerNameW and checks against a short whitelist of known sandbox names."
+    },
+    {
+      "id": "as-004",
+      "category": "anti_sandbox",
+      "primitive": "Sleep + low-res timer",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "note": "Calls NtDelayExecution / usleep and checks that the elapsed wall-clock time matches the requested sleep. Sandboxes often fast-forward sleeps."
+    },
+    {
+      "id": "pi-001",
+      "category": "process_introspection",
+      "primitive": "CreateToolhelp32Snapshot / Process32First",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Enumerate the process list. The anti-analysis use is to look for analysis-tool process names."
+    },
+    {
+      "id": "pi-002",
+      "category": "process_introspection",
+      "primitive": "NtQuerySystemInformation(SystemProcessInformation)",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Native API equivalent of CreateToolhelp32Snapshot. The encrypted-VM dispatcher uses this to walk the process list looking for debuggers and analysis tools."
+    },
+    {
+      "id": "pi-003",
+      "category": "process_introspection",
+      "primitive": "EnumProcessModules / GetModuleFileNameEx",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Enumerate loaded modules in a target process. Anti-analysis use is to look for analysis-tool DLL names."
+    },
+    {
+      "id": "pi-004",
+      "category": "process_introspection",
+      "primitive": "NtQueryVirtualMemory",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Walk a process's address space. Encrypted-VM packers use this to find the unpacked code region after the lazy-decrypt stub runs."
+    },
+    {
+      "id": "mi-001",
+      "category": "memory_integrity",
+      "primitive": "text-section SHA-256 at runtime",
+      "evidence_kind": "symbol",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "note": "Hashes the .text section at runtime and compares to a known-good value. Encrypted-VM packers use this to detect in-memory patching."
+    },
+    {
+      "id": "ci-001",
+      "category": "code_integrity",
+      "primitive": "IAT walk + compare to file",
+      "evidence_kind": "api_name",
+      "platforms": [
+        "windows"
+      ],
+      "note": "Walk the IAT at runtime; if a function pointer doesn't match the file offset, the IAT has been hooked."
+    },
+    {
+      "id": "ci-002",
+      "category": "code_integrity",
+      "primitive": "first-byte-of-function check",
+      "evidence_kind": "byte_sequence",
+      "byte_sequence": "E9",
+      "platforms": [
+        "x86",
+        "x86_64"
+      ],
+      "note": "Read the first byte of every function in the IAT; if it's 0xE9 (JMP rel32) or 0x68 0x?? 0x?? 0x?? 0x?? (PUSH imm32), the function has been hooked."
+    }
+  ]
+}

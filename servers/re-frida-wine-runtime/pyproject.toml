@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-frida-wine-runtime"
+version = "0.4.0"
+description = "RE-BREAKER Frida-on-Wine runtime (v0.4.0). Wine-spawn a Windows PE target, inject the frida-gadget into the Wine-hosted process via AppInit_DLLs + re-c-injection-build, and attach from the Linux side via the in-process gadget's TCP listener. This is the only known-working Frida path on a Linux host with Wine (GH #3339 / #3617 / #2734 confirm the out-of-process frida-server.exe + Linux frida-tools attach is broken)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0 + Offensive-Research-Use Clause"}
+authors = [{name = "Heretek-AI, Inc."}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "frida>=16.0",
+    "frida-tools>=13.0",
+]
+
+[project.scripts]
+re-frida-wine-runtime = "re_frida_wine_runtime.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

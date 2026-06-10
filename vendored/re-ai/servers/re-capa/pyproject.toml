@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-capa"
+version = "0.1.0"
+description = "MCP server exposing capa (Mandiant) for capability detection with MITRE ATT&CK / MBC mappings."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+keywords = ["mcp", "capa", "mandiant", "mitre", "att&ck", "malware", "reverse-engineering"]
+authors = [{name = "John"}]
+dependencies = [
+    "mcp[cli]>=1.2",
+    "flare-capa>=9.0",
+    "pydantic>=2.6",
+]
+
+[project.scripts]
+re-capa = "re_capa.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-vm-debug"
+version = "0.5.3"
+description = "RE-BREAKER re-vm-debug server (v0.5.3 FULLY IMPLEMENTED). QEMU gdb stub client: connect_gdb, set_breakpoint_hw (hardware breakpoints at guest phys addr — undetectable by the guest), set_watchpoint, read/write_registers, read/write_guest_phys_mem, read_guest_virt_mem, vm_continue/step/pause, translate_virt_to_phys, gdb_eval, vm_reset (recovery). The kernel-mode / hypervisor-level debug path. 15 tools, all real."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+authors = [{name = "RE-BREAKER contributors"}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "re-vm-control",  # for attach_gdb_stub + qemu_monitor_command
+]
+
+[project.scripts]
+re-vm-debug = "re_vm_debug.server:main"
+
+# v0.5.8: resolve re-vm-control from the local sibling server (not PyPI)
+[tool.uv.sources]
+re-vm-control = { path = "../re-vm-control" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

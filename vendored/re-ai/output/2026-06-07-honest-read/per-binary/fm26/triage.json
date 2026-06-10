@@ -1,0 +1,42 @@
+{
+  "run_id": "2026-06-07-honest-read",
+  "target_key": "fm26",
+  "target_name": "Football Manager 26",
+  "engine": "Unity 6.0.52f1",
+  "main_binary": "Input/Football Manager 26/fm.exe",
+  "secondary_binaries": ["GameAssembly.dll (52MB, 7 sections, vanilla IL2CPP)", "UnityPlayer.dll (33MB, 8 sections)"],
+  "size_bytes": 672256,
+  "sha256": "3653c97f9ccec2be28edc4faae67304b5b6c26733f2f07dea3e7c591d3b9ff73",
+  "imphash": "d6e7c31d8c77904effbf716fb806f1d3",
+  "is_pie": true,
+  "has_signature": false,
+  "has_debug": true,
+  "section_count": 7,
+  "section_table": "vanilla Unity 6 IL2CPP launcher layout (.text 56KB, .rdata 38KB, .data 3KB, .pdata 4KB, _RDATA 512B, .rsrc 565KB, .reloc 2KB)",
+  "protection_class": "unpacked-debug-pe (no packer on launcher; vanilla Unity 6)",
+  "gameassembly_protection_class": "unpacked-debug-pe (no VM/packer indicator on GameAssembly.dll)",
+  "anti_analysis_primitives": {
+    "launcher_fm_exe": {
+      "IsDebuggerPresent_string": 1,
+      "INT_3_count_ge_200": true,
+      "CPUID_count": 5,
+      "INVD_count_ge_200": "likely data (not opcode)",
+      "RDTSC": 0,
+      "VMXON": 0,
+      "VMCALL": 0
+    },
+    "GameAssembly_dll": {
+      "RDTSC": 57,
+      "INT_2D": 60,
+      "INT_3_count_ge_200": true,
+      "CPUID": 87,
+      "VMXON": 130,
+      "VMCALL": 0,
+      "INVD_count_ge_200": true,
+      "CPUID_hypervisor_leaf": 1
+    }
+  },
+  "imports_observed": "72 imports (KERNEL32 + UnityPlayer.UnityMain2), 4 exports (AmdPowerXpressRequestHighPerformance, D3D12SDKPath, D3D12SDKVersion, NvOptimusEnablement)",
+  "string_table_matches": 0,
+  "notes": "Vanilla Unity 6.0.52f1 IL2CPP ship build. No third-party DRM visible. The GameAssembly.dll has substantial anti-debug primitives (~130 VMXON sites, ~87 CPUID sites, 57 RDTSC) but these are likely standard runtime-protection patterns, not third-party. Gap 25 (metadata v31 not supported) confirmed: re-il2cpp cannot parse this game's class graph statically. Unity 6 ships metadata v31, re-il2cpp supports v24-v29."
+}

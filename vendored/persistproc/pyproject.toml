@@ -1,0 +1,91 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "persistproc"
+version = "0.2.1"
+description = "A shared process layer for the modern, multi-agent development workflow."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Steve Landey", email = "steve@stevelandey.com" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "fastmcp==2.9.2",
+    "rich>=14.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "pytest>=7.0", 
+    "pytest-asyncio>=0.21", 
+    "pytest-cov>=4.0",
+    "pytest-timeout>=2.1.0",
+    "pytest-xdist",
+    "pre-commit>=3.0.0",
+    "uvicorn>=0.35.0",
+]
+docs = [
+    "mkdocs>=1.5.3",
+    "mkdocs-material>=9.4.6",
+    "mkdocstrings[python]>=0.23.0",
+    "pymdown-extensions>=10.3.1",
+    "mkdocs-mermaid2-plugin>=1.1.1",
+    "mkdocs-github-admonitions-plugin",
+    "coverage-badge",
+]
+
+[project.scripts]
+persistproc = "persistproc.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/irskep/persistproc"
+"Bug Tracker" = "https://github.com/irskep/persistproc/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["persistproc"]
+
+[tool.ruff]
+# Use Ruff's recommended defaults with minimal overrides
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+# Use Ruff's recommended rule set
+extend-select = [
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "PLC0415",  # import-outside-toplevel (disallow imports inside functions)
+]
+
+# Only ignore rules that are problematic for this specific project
+ignore = [
+    "S101",   # Use of assert (fine in tests and debug code)
+    "I001",   # Import block is un-sorted (ruff format handles this)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",   # Use of assert is fine in tests
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["persistproc"] 

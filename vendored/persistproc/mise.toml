@@ -1,0 +1,17 @@
+[tools]
+python = "3.12"
+uv = "latest"
+
+[tasks]
+"deps:sync" = "uv sync --extra docs --extra dev"
+"docs:prepare" = { run = "scripts/prepare-docs.sh", sources = ["tests/**/*", "persistproc/**/*", "scripts/**/*", "README.md"], outputs = ["docs/index.md", "docs/tools.md"] }
+"docs:build" = { depends = ["docs:prepare"], run = "mkdocs build --strict" }
+"docs:serve" = { depends = ["docs:prepare"], run = "mkdocs serve" }
+"docs:build-local" = { depends = ["docs:prepare"], run = "mkdocs build --strict -f mkdocs-local.yml" }
+lint = { run = "sh -c 'uv run ruff check . --fix && uv run ruff format .'", description = "Run linter with auto-fix and format code" }
+"lint:check" = { run = "uv run ruff check .", description = "Check linting without fixing" }
+"lint:format" = { run = "uv run ruff format .", description = "Format code" }
+test = { run = "uv run pytest -n auto --dist=worksteal", description = "Run tests with parallel execution" }
+"test:serial" = { run = "uv run pytest", description = "Run tests serially (for debugging)" }
+"test:cov" = { run = "uv run pytest -n auto --dist=worksteal --cov=persistproc --cov-report=html", description = "Run tests with coverage report" }
+"bump-version" = { run = "scripts/bump-version", description = "Bump version (--patch by default, supports --minor, --major)" } 

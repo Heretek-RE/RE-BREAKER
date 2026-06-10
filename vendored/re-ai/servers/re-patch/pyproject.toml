@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-patch"
+version = "0.1.0"
+description = "MCP server for on-disk patching of binary artifacts: SHA-256 manifest, byte-level patch application, manifest-driven restore. Pure-Python, no system dependencies."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+keywords = ["mcp", "patch", "binary", "sha256", "manifest", "reverse-engineering", "tamper"]
+authors = [{name = "John"}]
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+]
+
+[project.scripts]
+re-patch = "re_patch.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

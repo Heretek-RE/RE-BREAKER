@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-qemu-antidetect"
+version = "0.1.0"
+description = "RE-BREAKER re-qemu-antidetect server (M3) — anti-VM libvirt XML hardening + posture validation."
+requires-python = ">=3.11"
+authors = [{name = "RE-BREAKER contributors"}]
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "lxml>=5.0",
+]
+
+[project.scripts]
+re-qemu-antidetect = "re_qemu_antidetect.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

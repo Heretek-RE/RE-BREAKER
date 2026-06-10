@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-ghidra-remote"
+version = "0.5.2"
+description = "RE-BREAKER re-ghidra-remote server (v0.5.2 FULLY IMPLEMENTED). Thin MCP proxy to bethington/ghidra-mcp running in the Windows VM. Requires GHIDRA_MCP_AUTH_TOKEN env (binds non-loopback auth-required). 8 tools: status, start/stop, open_program, list_functions, decompile_function, list_xrefs, run_script_inline, get_metadata. Uses the shared re-vm-bridge package."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+authors = [{name = "RE-BREAKER contributors"}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "httpx>=0.28",
+    "httpx-sse>=0.4",
+    "re-vm-ssh",
+]
+
+[project.scripts]
+re-ghidra-remote = "re_ghidra_remote.server:main"
+
+# v0.5.8: resolve re-vm-ssh from the local sibling server (not PyPI)
+[tool.uv.sources]
+re-vm-ssh = { path = "../re-vm-ssh" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

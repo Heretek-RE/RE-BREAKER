@@ -1,0 +1,15 @@
+﻿<Project>
+  <PropertyGroup>
+    <PluginName>MCP - Agent Smithers</PluginName>
+    <PluginAssemblyName>x64DbgMCPServer</PluginAssemblyName>
+
+    <PluginRootNamespace>DotNetPlugin</PluginRootNamespace>
+    <PluginOutputPath>..\bin\$(Platform)\$(Configuration)\</PluginOutputPath>
+
+    <LangVersion>9</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <AllowUnloading>true</AllowUnloading>
+  </PropertyGroup>
+</Project>

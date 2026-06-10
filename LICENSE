@@ -1,0 +1,116 @@
+RE-BREAKER License — AGPL-3.0-or-later with Offensive-Research-Use Clause
+
+================================================================================
+PRIMARY LICENSE: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+================================================================================
+
+Copyright (c) 2026 RE-BREAKER contributors
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program. If not, see <https://www.gnu.org/licenses/agpl-3.0.html>.
+
+================================================================================
+ADDITIONAL CLAUSE: OFFENSIVE-RESEARCH-USE
+================================================================================
+
+In addition to the AGPL-3.0 terms above, the following restrictions apply
+to the use, redistribution, and modification of this software:
+
+1. AUTHORIZED USES. This software may be used only for:
+
+   (a) Reverse-engineering of binaries the analyst has the legal right to
+       analyze, including but not limited to:
+       - Software subject to a signed engagement letter with the rights holder
+       - Open-source software under a license that permits RE
+       - Software for which the analyst is the rights holder
+       - Software distributed under terms that expressly permit RE
+         (e.g. educational / academic licenses, bug-bounty programs)
+       - Software whose rights holder has granted written consent
+
+   (b) Malware analysis, including but not limited to:
+       - Samples collected by the analyst's organization
+       - Samples from open threat-intelligence feeds (VirusTotal, etc.)
+       - Samples shared by trusted partners under NDAs
+
+   (c) Security research, including but not limited to:
+       - Academic research (peer-reviewed publication)
+       - Defensive-tool development (anti-malware, EDR, anti-tamper detection)
+       - Bug-bounty / coordinated disclosure programs
+       - CTF / wargame / academic exercise contexts
+
+   (d) Authorized penetration testing and red-team work, including but not
+       limited to:
+       - Engagements with explicit written scope
+       - Authorized security audits
+       - Defensive exercises with informed consent
+
+2. UNAUTHORIZED USES. The following uses are EXPLICITLY PROHIBITED:
+
+   (a) Piracy of commercial software, including but not limited to:
+       - Circumventing license checks to use software without payment
+       - Bypassing DRM to access copyrighted content without authorization
+       - Distributing tools or techniques with the primary purpose of enabling
+         the above
+
+   (b) Unauthorized access to systems, including but not limited to:
+       - Accessing systems without the rights holder's consent
+       - Exfiltrating data from systems the analyst doesn't own
+       - Bypassing authentication / authorization mechanisms for unauthorized
+         access
+
+   (c) Activities that violate the laws of the operator's jurisdiction.
+
+3. DISTRIBUTION. Any redistribution, modified or unmodified, must:
+
+   (a) Include this LICENSE file in full
+   (b) Include the LICENSE-OFFENSIVE.md file in full
+   (c) Preserve all copyright notices
+   (d) Be subject to the AGPL-3.0 source-disclosure obligation
+
+4. NO MALWARE DISTRIBUTION. This software may not be used to distribute,
+   deploy, or facilitate the deployment of malware. The bypass primitives
+   herein are for ANALYZING and DEFENDING AGAINST malware, not for creating
+   or propagating it.
+
+5. NO WARFARE / WEAPONS USE. This software may not be used in the development,
+   deployment, or operation of weapons systems or military operations
+   that violate international humanitarian law.
+
+6. NO SURVEILLANCE OF CONSENTING INDIVIDUALS. This software may not be used
+   to surveil, monitor, or target individuals who have not provided
+   informed consent to such monitoring.
+
+7. COMPLIANCE WITH EXPORT CONTROLS. Users are responsible for compliance
+   with all applicable export-control laws and regulations (EAR, ITAR, etc.)
+   when using this software. Some bypass primitives may be subject to
+   cryptographic-tool export controls.
+
+8. NO WARRANTY OF FITNESS FOR PURPOSE. This software is provided as-is
+   without any warranty of fitness for any particular purpose, including
+   any warranty of fitness for legitimate security research. The
+   contributors make no representations about the suitability of this
+   software for any use case.
+
+9. LIMITATION OF LIABILITY. In no event shall the contributors be liable
+   for any claim, damages, or other liability arising from, out of, or in
+   connection with the use of this software, including but not limited to
+   any illegal use, any unauthorized access, any copyright infringement, or
+   any other harm caused by the use or misuse of this software.
+
+10. ENFORCEMENT. Violation of the offensive-research-use clause terminates
+    the user's license to use this software. The contributors reserve the
+    right to pursue any and all legal remedies for violations of this clause.
+
+================================================================================
+END OF LICENSE
+================================================================================

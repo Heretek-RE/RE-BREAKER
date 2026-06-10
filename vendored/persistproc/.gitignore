@@ -1,0 +1,19 @@
+__pycache__/
+.venv/
+build/
+dist/
+*.egg-info/
+.coverage.*
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+coverage.xml
+
+# New coverage data directory
++.coverage_data/
+/site
+/fastmcp
+/tests/_artifacts

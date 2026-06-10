@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-vm-launch"
+version = "0.5.1"
+description = "RE-BREAKER re-vm-launch server (v0.5.1 FULLY IMPLEMENTED). Upload a target binary to the Windows VM and launch it with full instrumentation hooks (WMI Win32_Process.Create with optional CREATE_SUSPENDED, debugger attach, log streaming). 6 tools: status, upload_target, launch_target, wait_for_process, kill_target, get_launch_handle."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+authors = [{name = "RE-BREAKER contributors"}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "re-vm-ssh",  # shared SSH client
+]
+
+[project.scripts]
+re-vm-launch = "re_vm_launch.server:main"
+
+# v0.5.8: resolve re-vm-ssh from the local sibling server (not PyPI)
+[tool.uv.sources]
+re-vm-ssh = { path = "../re-vm-ssh" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

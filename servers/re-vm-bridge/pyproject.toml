@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-vm-bridge"
+version = "0.5.2"
+description = "RE-BREAKER re-vm-bridge shared package (v0.5.2). Thin SSE proxy helper used by re-ida-remote / re-ghidra-remote / re-x64dbg-remote to talk to the upstream MCPs running in the Windows VM. Not exposed as an MCP server itself — pure import-time library."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+authors = [{name = "RE-BREAKER contributors"}]
+
+dependencies = [
+    "httpx>=0.28",
+    "httpx-sse>=0.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

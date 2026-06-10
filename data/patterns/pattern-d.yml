@@ -1,0 +1,96 @@
+name: pattern-d
+source: docs/PLAYBOOKS/ea-entitlement-replay.md
+version: 0.2.0
+target_class: EA-shipped games (LIR, Battlefield, FIFA, etc.) with an active Origin
+  auth flow. This is the LIR supplement to `ea-origin-stub-drop.md` — for cases where
+  the stub-drop doesn't satisfy the online entitlement re-check.
+catalog_entry: encrypted-vm.bytecode-interpreter.pattern-b
+expected_runtime: 120 minutes
+success_probability: 0.4
+tools:
+- re-runtime-dump
+steps:
+- number: 1
+  title: Capture the Origin auth flow
+- number: 2
+  title: Document the entitlement token format
+- number: 3
+  title: Build a replay server
+- number: 4
+  title: Configure the binary to use the replay server
+- number: 5
+  title: Document the result
+- number: 6
+  title: Known limitations / next iterations
+verify:
+- The Origin auth server URL is captured
+- The request body has the entitlement token format
+- The response has the entitlement grant
+- The request body schema is documented
+- The response body schema is documented
+- The expiration semantics are understood (token lifetime, refresh logic)
+- The replay server listens on 127.0.0.1:8080
+- The replay server returns the same schema as the captured response
+- The binary's WinHTTP requests are routed to the replay server
+- The entitlement check returns "entitled" (the replayed response)
+- '**DRM-adjacent territory**. The LICENSE-OFFENSIVE.md clause applies; ensure your
+  use case is authorized.'
+- The Origin auth protocol changes; the replay may break after Origin updates their
+  auth flow.
+- Online features (multiplayer, leaderboards) require additional entitlement checks
+  beyond the launch entitlement.
+- Some titles use a per-launch nonce; the replay needs to handle the nonce.
+- Some titles use certificate pinning; the replay needs to provide a matching certificate.
+- The replay is brittle; the stub-drop approach in `ea-origin-stub-drop.md` is more
+  reliable.
+commands:
+- '# Use PCAP to capture the WinHTTP traffic from Core/Activation64.dll
+
+  sudo tcpdump -i any -w /tmp/lir-origin.pcap ''host auth.origin.com and tcp''
+
+
+  # Or use mitmproxy (mitmproxy)
+
+  re-mitm2swagger --intercept --target=Core/Activation64.dll --output=/tmp/lir-mitm.flow'
+- '# The Origin entitlement token is typically:
+
+  # {
+
+  #   "client_id": "...",
+
+  #   "client_secret": "...",
+
+  #   "grant_type": "client_credentials",
+
+  #   "scope": "..."
+
+  # }
+
+  # Plus the entitlement grant:
+
+  # {
+
+  #   "entitlement_id": "...",
+
+  #   "user_id": "...",
+
+  #   "product_id": "...",
+
+  #   "entitled": true,
+
+  #   "expires_at": "..."
+
+  # }'
+- '# Use the hosts file to redirect auth.origin.com to 127.0.0.1
+
+  # (requires admin / root privileges)
+
+  echo "127.0.0.1 auth.origin.com" >> /etc/hosts
+
+
+  # Or use a proxy
+
+  mitmproxy --mode reverse:https://auth.origin.com --listen-port 8080'
+- "re-bypass-result --target=Core/Activation64.dll \\\n  --replay-server=/tmp/replay_server.py\
+  \ \\\n  --runtime-cost-minutes=120 \\\n  --catalog-match=encrypted-vm.bytecode-interpreter.pattern-d\
+  \ \\\n  --output=/tmp/lir-replay-bypass-result.md"

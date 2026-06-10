@@ -1,0 +1,21 @@
+# Wine hosts file snippet — Pearl Abyss internal protocol
+# Per SOW-O (Pearl Abyss): in-lab protocol analysis in scope; production interaction prohibited.
+#
+# ⚠️ INFERRED — NOT VERIFIED ⚠️
+# The PA HTTP endpoints below are INFERRED from convention. The static URL
+# scan of CrimsonDesert_Deluxe_Edition/bin64/*.dll found 0 entitlement
+# hostnames (only certificate CRL URLs). The "hermes" prefix is REAL
+# (the binary has `hermessdkcorewrapper_release.dll`) but the actual
+# hostname (`hermes.pearlabyss.com`) is a guess.
+#
+# RE work needed (Phase 1 RE per the v5 plan):
+#   1. Run CD with re-frida-wine-runtime attached
+#   2. Capture the pers.exe + hermessdkcorewrapper_release.dll network calls
+#   3. Reverse the Pearl Abyss SDK calls to extract the actual hostnames + JSON shapes
+#   4. Update this file with the verified hostnames
+
+127.0.0.1   auth.pearlabyss.com
+127.0.0.1   api.pearlabyss.com
+127.0.0.1   entitlement.pearlabyss.com
+127.0.0.1   cd.pearlabyss.com
+127.0.0.1   hermes.pearlabyss.com

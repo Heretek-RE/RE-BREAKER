@@ -1,0 +1,32 @@
+name: anti-debug-patch-apply
+source: skills/re-anti-debug-patch-apply/SKILL.md
+version: 0.3.0
+when_to_use: Catalog match returned anti-debug entries (rdtsc-timing-trap, cpuid-hypervisor-leaf,
+  int2d, int3, vmcall, vmxon). Operator wants to actually apply the patch plan.
+target_class: Any binary with anti-debug primitives (FM26, HKIA, LIR, P3R, CD, TWW3,
+  007FL)
+catalog_entry: n/a (workflow)
+expected_runtime_minutes: 5
+success_probability: 0.85
+tools:
+- re-anti-debug-patch
+- re-patch-apply
+- re-speakeasy
+steps:
+- step: 1
+  tool: re-anti-debug-patch
+  action: patch_target with strategies=zero
+  purpose: generate the per-primitive patch plan
+- step: 2
+  tool: re-patch-apply
+  action: apply_patch with the patch plan
+  purpose: actually apply the patches to a copy of the binary; write per-site patch
+    log (closes G5)
+- step: 3
+  tool: re-speakeasy
+  action: run the patched binary under the emulator
+  purpose: verify no SIGABRT
+- step: 4
+  tool: re-catalog-match
+  action: re-match the patched binary
+  purpose: confirm the Bypass worked (the anti-debug entries should no longer match)

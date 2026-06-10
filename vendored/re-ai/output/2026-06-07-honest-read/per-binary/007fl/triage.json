@@ -1,0 +1,30 @@
+{
+  "run_id": "2026-06-07-honest-read",
+  "target_key": "007fl",
+  "target_name": "007 First Light",
+  "main_binary": "Input/007 First Light/Retail/007FirstLight.exe",
+  "size_bytes": 340703112,
+  "sha256": "79bd4d3af321ffd61511c40bff307a7aea10ca200893d18dad80c4d48b9e06e5",
+  "imphash": "9c78a7662f3f2441b4ff0618f535df12",
+  "is_pie": false,
+  "has_signature": true,
+  "has_debug": true,
+  "section_count": 12,
+  "section_table": ".text(44MB,entropy 6.75), .sxdata(9MB,5.13), .edata(6.8MB,3.11), .idata(2.1MB,0.001), .trace(80KB,5.42), .xtls(283KB,6.60), .xpdata(869KB,5.47), .tls(274MB,6.69)**, .data(245KB,4.72), .code(1KB,2.98), .debug(29KB,5.77), .data1(2.1MB,7.19)*",
+  "protection_class": "encrypted-vm-bytecode-interpreter",
+  "protection_evidence": ["section set intersects {.xtls, .xtext, .xpdata, .arch, .link, .sbss, .xcode}", "matched_sections: .xpdata, .xtls"],
+  "anti_analysis_primitives": {
+    "RDTSC_count_ge_200": true,
+    "INT_2D_count_ge_200": true,
+    "INT_3_count_ge_200": true,
+    "CPUID_count_ge_200": true,
+    "VMXON_count_ge_200": true,
+    "VMCALL_count": 28,
+    "INVD_count_ge_200": true,
+    "CPUID_hypervisor_leaf_count": 2
+  },
+  "imports_observed": "see /home/john/.claude/projects/-home-john-Desktop-RE-RE-AI/.../mcp-re-lief-get_imports_exports-1780876984081.txt (7,589 lines)",
+  "exports_observed": "(truncated file - 007FL has thousands of exports, file too large to summarize inline)",
+  "string_table_matches": 0,
+  "notes": "340MB IOI Glacier-class proprietary binary. .tls section is anomalously large (274MB, entropy 6.69) — likely a TLS-import or section-attribute anomaly. .data1 entropy 7.19 indicates encrypted region. Anti-analysis surface is overwhelming: 200+ RDTSC sites, 200+ CPUID sites, 200+ VMXON sites, 28 VMCALL sites. This is the heaviest anti-VM presence of the 7 targets."
+}

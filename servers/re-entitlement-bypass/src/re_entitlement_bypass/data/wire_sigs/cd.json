@@ -1,0 +1,39 @@
+{
+  "target": "cd",
+  "binary_path": "RE_BREAKER_PLUGIN_ROOT/Input/Crimson_Desert_Deluxe_Edition/steamapps/common/Crimson Desert/bin64/CrimsonDesert.exe",
+  "re_run_on": "2026-06-09",
+  "re_pass_status": "RECONNAISSANCE ONLY (per user's decision — PA RE deferred to a future engagement)",
+
+  "recon_findings": {
+    "binary_tree": "Crimson_Desert_Deluxe_Edition/steamapps/common/Crimson Desert/ (1 root dir, 51 .dll/.exe files). The launcher is `CrimsonDesert.exe`.",
+    "key_sdk_files": [
+      "Crimson Desert/bin64/pers.exe (PA's pers.exe — the per-game launcher shim)",
+      "Crimson Desert/bin64/hermessdkcorewrapper_release.dll (PA's Hermes SDK wrapper)",
+      "Crimson Desert/bin64/cd_id.dll (DenuvOwO's per-game identity marker, 1.5 KB)",
+      "Crimson Desert/bin64/coldclient/coldloader.dll (DenuvOwO's in-proc injection shim, 1.5 KB)",
+      "Crimson Desert/bin64/sentry.dll (Sentry crash reporter)"
+    ],
+    "binary_size_estimate": "~130 GB total (per the v0.4.1.9 finding)"
+  },
+
+  "static_url_scan_results": {
+    "scan_target": "Crimson_Desert_Deluxe_Edition/**/*.dll + Crimson_Desert_Deluxe_Edition/**/*.exe",
+    "urls_found": 51,
+    "url_categories": "All 51 URLs are certificate CRL URLs (cacerts.digicert.com, crl.comodoca.com, crl.microsoft.com) — NOT PA endpoints",
+    "named_pipes_found": 0
+  },
+
+  "hermessdkcorewrapper_release.dll_inspection": {
+    "file_path": "Crimson Desert/bin64/hermessdkcorewrapper_release.dll",
+    "size_estimate": "Not measured in v0.5.1 (the binary is large)",
+    "static_url_scan": "0 PA URLs found. The 'hermes.pearlabyss.com' hostname is INFERRED from the DLL's name + the convention (per the v0.5.0 sanity-check)."
+  },
+
+  "conclusion": "The Pearl Abyss internal protocol endpoints are NOT in the static binaries. Phase 1 RE work requires dynamic analysis (re-frida-wine-runtime) or a disassembler pass on hermessdkcorewrapper_release.dll + pers.exe to find the URL construction code + the named-pipe (if any) + the Hermes SDK calls.",
+
+  "phase_1_re_needed": "Deferred to a future engagement. The PA emulator remains a stub.",
+
+  "urls": [],
+  "json_keys": [],
+  "pipes": []
+}

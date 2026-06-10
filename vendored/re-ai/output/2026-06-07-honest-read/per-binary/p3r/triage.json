@@ -1,0 +1,41 @@
+{
+  "run_id": "2026-06-07-honest-read",
+  "target_key": "p3r",
+  "target_name": "Persona 3 Reload (Atlus/Sega)",
+  "engine": "UE5 (Unreal Engine 5) with encrypted-VM bytecode interpreter",
+  "main_binary": "Input/il2cpp_target/steamapps/common/P3R/P3R/Binaries/Win64/P3R.exe",
+  "secondary_binaries": ["OpenImageDenoise.dll (49MB)", "tbb12.dll"],
+  "size_bytes": 373552576,
+  "sha256": "f504ec35f76397e448ba2c19d1b4e1ff70d95ab9ebd261a92a82e43a163d228a",
+  "imphash": "e4a5bfe52b92aa88420197e32ddfa88e",
+  "is_pie": false,
+  "has_signature": true,
+  "has_debug": true,
+  "section_count": 19,
+  "section_table": ".tls$(67MB,entropy 6.72), .rdata(20.2MB,5.55), .xcode(2.9MB,4.22), .sbss(512B,0), .arch(3KB,4.34), .tls(512B,0.12), .idata(163KB,5.49), .xtext(350KB,6.42), .srdata(512B,0), .text(279MB,6.71), .udata(204KB,3.79), .xpdata(512B,2.95), .sdata(512B,2.95), .data2(512B,4.65), .xtls(16KB,7.80), .sxdata(512B,2.88), .trace(3KB,4.83), .data1(9.7KB,5.65), .rodata(3.4MB,7.19)",
+  "protection_class": "encrypted-vm-bytecode-interpreter (Pattern A-DW confirmed: matched .arch, .sbss, .xcode, .xpdata, .xtext, .xtls)",
+  "anti_analysis_primitives": {
+    "RDTSC_count_ge_200": true,
+    "INT_2D_count_ge_200": true,
+    "INT_3_count_ge_200": true,
+    "CPUID_count_ge_200": true,
+    "VMXON_count_ge_200": true,
+    "VMCALL": 36,
+    "INVD_count_ge_200": true,
+    "CPUID_hypervisor_leaf": 3
+  },
+  "hypervisor_posture": "kernel-active (201 CPUID leaves, 101 VMX-EPT hits, 1217 RDTSC, 0 registry keywords, 1 SMBIOS/ACPI)",
+  "debug_directory": {
+    "backend": "lief.debug",
+    "debug_entries": 3,
+    "has_pogo_entry": true,
+    "has_codeview_entry": true,
+    "pogo_entry_size_bytes": 1216,
+    "codeview_entry_size_bytes": 59,
+    "codeview_timestamp": 1756998515,
+    "vc_feature_entry_present": true,
+    "pogo_indicates": "ATD profile-guided-optimization layer = Pattern A-DW differentiator from base Pattern A"
+  },
+  "string_table_matches": 0,
+  "notes": "Pattern A-DW confirmed (full section set match + POGO debug entry + kernel-active posture). The v2.9.0 stress test flagged 3 'denuvo' string hits in this binary; current re-anti-analysis string-table pass returned 0 (catalog filter doesn't include 'denuvo' as a primitive - the byte-hit pass is the canonical path). P3R is the canonical Denuvo ATD case from the prior run. .text section is 279MB (the engine code)."
+}

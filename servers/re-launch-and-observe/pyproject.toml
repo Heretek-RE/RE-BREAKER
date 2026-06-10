@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build_backend = "setuptools.build_meta"
+
+[project]
+name = "re-launch-and-observe"
+version = "0.2.0"
+description = "RE-BREAKER re-launch-and-observe server (v0.2.0) — spawn a Wine target with full observability: xprop polling, ffmpeg x11grab capture (persistproc-backed for cross-restart persistence), emulator log tailing, scheduled XTest key injection. Built to defeat the v0.4.1.9 cross-target failure-mode trail where targets stuck on splash cinemáticos and 'Error' dialogs without leaving a paper trail. v0.2.0 implements the persistproc-backed ffmpeg path; xprop + Wine log tail are scaffold-level; XTest injection is a future phase."
+requires-python = ">=3.11"
+authors = [{name = "RE-BREAKER contributors"}]
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "fastmcp==2.9.2",  # Pinned to match vendored persistproc's venv (see ADR 0006)
+    "mcp==1.9.4",      # Pinned; newer mcp breaks fastmcp 2.9.2
+    "pydantic==2.11.7", # Pinned; newer pydantic breaks fastmcp 2.9.2
+]
+[project.scripts]
+re-launch-and-observe = "re_launch_and_observe.server:main"
+[tool.setuptools.packages.find]
+where = ["src"]
+[tool.setuptools.package-dir]
+"" = "src"

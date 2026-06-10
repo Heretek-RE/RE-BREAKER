@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-injection-runtime"
+version = "0.4.0"
+description = "RE-BREAKER C-injection runtime (v0.4.0). Wraps the re-c-injection-build C library (inline trampolines, IAT/GOT override, named-pipe/Unix-socket IPC) for runtime hooking without Frida. Useful when Frida-on-Wine is unavailable or when JS-hook overhead is too high."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0 + Offensive-Research-Use Clause"}
+authors = [{name = "Heretek-AI, Inc."}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+]
+
+[project.scripts]
+re-injection-runtime = "re_injection_runtime.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

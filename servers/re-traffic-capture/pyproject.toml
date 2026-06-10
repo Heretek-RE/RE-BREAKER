@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build_backend = "setuptools.build_meta"
+
+[project]
+name = "re-traffic-capture"
+version = "0.1.0"
+description = "RE-BREAKER re-traffic-capture server — spawn a Wine target with WINEDEBUG=+winsock,+wininet,+http and parse the output into a structured event log (DNS lookup, HTTP request, response code, payload snippet). Built to defeat the v0.4.1.9 'no network activity' failure-mode where targets like FM26 make no external calls and we cannot identify the entitlement gate."
+requires-python = ">=3.11"
+authors = [{name = "RE-BREAKER contributors"}]
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+]
+[project.scripts]
+re-traffic-capture = "re_traffic_capture.server:main"
+[tool.setuptools.packages.find]
+where = ["src"]
+[tool.setuptools.package-dir]
+"" = "src"

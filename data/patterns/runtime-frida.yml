@@ -1,0 +1,28 @@
+name: runtime-frida
+source: skills/re-runtime-frida/SKILL.md
+version: 0.3.0
+when_to_use: Catalog match returned encrypted-VM entries. Operator wants to actually
+  capture the decrypted method bodies.
+target_class: Unity IL2CPP / UE5 / proprietary engine targets with encrypted-VM bytecode
+  interpreter (Pattern A / A-DW / A-VMT / B / C / D)
+catalog_entry: n/a (workflow)
+expected_runtime_minutes: 30
+success_probability: 0.6
+tools:
+- re-frida-runtime
+- re-runtime-dump
+- re-vm-decrypt
+steps:
+- step: 1
+  tool: re-frida-runtime
+  action: frida_attach with pattern=Pattern A
+  purpose: actually attach Frida + install encryption-stub hook + capture per-method
+    plaintext
+- step: 2
+  tool: re-vm-decrypt
+  action: decrypt_target to confirm the hook set
+  purpose: re-plan the encryption-stub hook for the specific target
+- step: 3
+  tool: re-catalog-match
+  action: re-match with intent=defender
+  purpose: confirm the catalog re-match against the captured payloads

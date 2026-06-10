@@ -1,0 +1,112 @@
+name: pattern-a
+source: docs/PLAYBOOKS/encrypted-vm-bytecode-interpreter-pattern-a.md
+version: 0.2.0
+target_class: 'Unity 6 / Unity 2022.3 LTS / older Unity games with an encrypted-VM
+  bytecode interpreter layer on top of the standard IL2CPP runtime. Examples: **Football
+  Manager 26** (FM26), **Hello Kitty Island Adventure** (HKIA), **Lost In Random**
+  (LIR — but with Origin stub-drop instead of bypass).'
+catalog_entry: encrypted-vm.bytecode-interpreter.pattern-a
+expected_runtime: 45 minutes (per-target static + dynamic)
+success_probability: 0.7
+tools:
+- re-vm-decrypt
+steps:
+- number: 1
+  title: Confirm the target matches the pattern
+- number: 2
+  title: Establish the dynamic baseline
+- number: 3
+  title: Patch the anti-debug primitives
+- number: 4
+  title: Spoof the hypervisor detection
+- number: 5
+  title: Lift the encrypted-VM dispatcher
+- number: 6
+  title: Document the result
+- number: 7
+  title: Known limitations / next iterations
+verify:
+- Section set intersects [`.xtls`, `.xpdata`, `.xdata`, `.arch`, `.link`, `.sbss`,
+  `.xcode`]
+- '`re-anti-analysis` reports ≥ 50 RDTSC sites'
+- '`re-anti-analysis` reports ≥ 50 CPUID sites'
+- '`re-anti-analysis` reports ≥ 50 VMXON sites'
+- '`re-hypervisor-detect` reports `kernel-active` or `static-probes-only`'
+- '`/tmp/fm26-emu/decrypted/` has at least 1 file (the lazy-decrypted region)'
+- The decrypted file size is between 1MB and 100MB (typical for a Unity GameAssembly's
+  runtime-decrypted code)
+- The `speakeasy-trace.json` shows at least 1 anti-debug API call (IsDebuggerPresent
+  or RDTSC)
+- The patched binary boots without crashing (verify by attempting a 30s speakeasy
+  run after patching)
+- No anti-debug API calls are intercepted after patching (verify by re-running speakeasy)
+- All CPUID-leaf-1-ECX-bit-31 reads return 0
+- All CPUID-leaf-0x40000000-vendor reads return the bare-metal vendor string
+- All VMCALL probes are no-op'd (or return 0)
+- The lifted IL has fewer than 1000 instructions (per-dispatcher)
+- The simplified IL has at least 50% fewer instructions than the raw lift
+- The simplified IL has named basic blocks (not just block_0, block_1, ...)
+- The online entitlement check (Origin / Steam / EOS) still requires a valid publisher
+  account, unless you also apply the corresponding launch-entitlement bypass (`re-origin-stub-drop`
+  / `re-eos-bypass` / etc.)
+- The bypass is per-target; each new build of the same game requires re-running the
+  playbook
+- Some encrypted-VM bytecode interpreters have built-in anti-tamper that detects the
+  patch + exits; in that case, use the Frida-only approach (`--mode=frida`) instead
+  of the static-patch approach
+- If the runtime-decrypted region is larger than 100MB, the lift may take 1-2 hours
+  (consider `re-triton` symbolic execution as a faster alternative)
+commands:
+- '# Static triage
+
+  re-static-triage --target=GameAssembly.dll --output=/tmp/fm26-triage.json
+
+
+  # Anti-analysis scan
+
+  re-anti-analysis --target=GameAssembly.dll --output=/tmp/fm26-anti.json
+
+
+  # Hypervisor posture
+
+  re-hypervisor-detect --target=GameAssembly.dll --output=/tmp/fm26-hyp.json'
+- 're-catalog-match --triage=/tmp/fm26-triage.json --intent=both
+
+  # Expect: encrypted-vm.bytecode-interpreter.pattern-a (high confidence)
+
+  # Expect: anti-debug.rdtsc-timing-trap (medium-high confidence)
+
+  # Expect: anti-vm.cpuid-leaf-1-ecx-bit-31 (medium-high confidence)'
+- '# Speakeasy emulation
+
+  re-runtime-dump --target=GameAssembly.dll --mode=emulator --output=/tmp/fm26-emu/
+  --license-acknowledge --timeout=300'
+- "# Identify the first 5 RDTSC sites\njq '.byte_sequences[] | select(.primitive ==\
+  \ \"RDTSC\") | .matches[:5]' /tmp/fm26-anti.json\n\n# Patch each RDTSC site to return\
+  \ 0\nfor offset in $(jq -r '.byte_sequences[] | select(.primitive == \"RDTSC\")\
+  \ | .matches[:5] | .[]' /tmp/fm26-anti.json); do\n  re-anti-debug-patch --target=GameAssembly.dll\
+  \ --offset=$offset --strategy=rdtsc-zero\ndone"
+- '# Snapshot a bare-metal CPUID profile (run on a known-bare-metal host)
+
+  re-anti-vm-spoof --snapshot-bare-metal --output=/tmp/cpuid-snapshot.json
+
+
+  # Apply the snapshot at runtime
+
+  re-anti-vm-spoof --target=GameAssembly.dll --snapshot=/tmp/cpuid-snapshot.json --mode=frida'
+- '# Identify the dispatcher candidate
+
+  re-rizin --target=GameAssembly.dll --find-dispatcher
+
+
+  # Lift the dispatcher''s IL
+
+  re-vtil --target=GameAssembly.dll --dispatcher=<dispatcher_rva> --output=/tmp/fm26-dispatcher.il
+
+
+  # Simplify the lifted IL with the d810-ng pass set
+
+  re-vtil --il=/tmp/fm26-dispatcher.il --simplify=ollvm-default --output=/tmp/fm26-dispatcher-simplified.il'
+- "# Generate the bypass result document\nre-bypass-result --target=GameAssembly.dll\
+  \ \\\n  --dispatcher-il=/tmp/fm26-dispatcher-simplified.il \\\n  --runtime-cost-minutes=42\
+  \ \\\n  --catalog-match=encrypted-vm.bytecode-interpreter.pattern-a \\\n  --output=/tmp/fm26-bypass-result.md"

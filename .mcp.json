@@ -1,0 +1,440 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/.mcp.schema.json",
+  "comment": "RE-BREAKER .mcp.json v0.6.0 \u2014 30 MCP servers. v0.6.0 adds re-persistproc (sidecar to vendored/upstream persistproc) and re-ui-automate (sidecar to vendored/upstream touchpoint-mcp, 27 tools) and ssh-mcp (sidecar to vendored/blakerouse/ssh-mcp Go binary). All 3 upstream binaries live in vendored/. v0.6.0 also adds disk-persistence for the in-process registries in re-vm-launch and re-vm-ssh (per ADR 0006).",
+  "mcpServers": {
+    "re-runtime-dump": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-runtime-dump",
+        "run",
+        "re-runtime-dump"
+      ],
+      "env": {
+        "RE_BREAKER_LICENSE_FILE": "${CLAUDE_PLUGIN_ROOT}/LICENSE-OFFENSIVE.md",
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-catalog-match": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-catalog-match",
+        "run",
+        "re-catalog-match"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "RE_BREAKER_CATALOG_PATH": "${CLAUDE_PLUGIN_ROOT}/data/catalog.json",
+        "RE_BREAKER_YARA_RULES_PATH": "${CLAUDE_PLUGIN_ROOT}/data/yara/techniques.yar",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-anti-debug-patch": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-anti-debug-patch",
+        "run",
+        "re-anti-debug-patch"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-anti-vm-spoof": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-anti-vm-spoof",
+        "run",
+        "re-anti-vm-spoof"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-vm-decrypt": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-vm-decrypt",
+        "run",
+        "re-vm-decrypt"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-encrypted-vm-bypass": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-encrypted-vm-bypass",
+        "run",
+        "re-encrypted-vm-bypass"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "RE_BREAKER_PATTERNS_PATH": "${CLAUDE_PLUGIN_ROOT}/data/patterns",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-vendor-anti-tamper": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-vendor-anti-tamper",
+        "run",
+        "re-vendor-anti-tamper"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "RE_BREAKER_VENDORS": "denuvo,vmprotect,themida,starforce,arxan,eac,be",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-il2cpp-triage": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-il2cpp-triage",
+        "run",
+        "re-il2cpp-triage"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-triage": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-triage",
+        "run",
+        "re-triage"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-frida-runtime": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-frida-runtime",
+        "run",
+        "re-frida-runtime"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-patch-apply": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-patch-apply",
+        "run",
+        "re-patch-apply"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-c-injection-build": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-c-injection-build",
+        "run",
+        "re-c-injection-build"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-frida-wine-runtime": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-frida-wine-runtime",
+        "run",
+        "re-frida-wine-runtime"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-injection-runtime": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-injection-runtime",
+        "run",
+        "re-injection-runtime"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-winedbg": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-winedbg",
+        "run",
+        "re-winedbg"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-entitlement-bypass": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-entitlement-bypass",
+        "run",
+        "re-entitlement-bypass"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-launch-and-observe": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-launch-and-observe",
+        "run",
+        "re-launch-and-observe"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-cinematic-skip": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-cinematic-skip",
+        "run",
+        "re-cinematic-skip"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-traffic-capture": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-traffic-capture",
+        "run",
+        "re-traffic-capture"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-vm-control": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-vm-control",
+        "run",
+        "re-vm-control"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-vm-ssh": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-vm-ssh",
+        "run",
+        "re-vm-ssh"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "RE_BREAKER_SSH_HOST": "john@RE_BREAKER_SSH_HOST",
+        "RE_BREAKER_SSH_KEY": "RE_BREAKER_SSH_KEY",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-vm-launch": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-vm-launch",
+        "run",
+        "re-vm-launch"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-vm-debug": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-vm-debug",
+        "run",
+        "re-vm-debug"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-vm-memory": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-vm-memory",
+        "run",
+        "re-vm-memory"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-ida-remote": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-ida-remote",
+        "run",
+        "re-ida-remote"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "RE_BREAKER_SSH_HOST": "john@RE_BREAKER_SSH_HOST",
+        "RE_BREAKER_SSH_KEY": "RE_BREAKER_SSH_KEY",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-ghidra-remote": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-ghidra-remote",
+        "run",
+        "re-ghidra-remote"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "RE_BREAKER_GHIDRA_AUTH_TOKEN": "${RE_BREAKER_GHIDRA_AUTH_TOKEN:-}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-x64dbg-remote": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-x64dbg-remote",
+        "run",
+        "re-x64dbg-remote"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "RE_BREAKER_SSH_HOST": "john@RE_BREAKER_SSH_HOST",
+        "RE_BREAKER_SSH_KEY": "RE_BREAKER_SSH_KEY",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-persistproc": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/vendored/persistproc/.venv/bin/persistproc",
+      "args": [
+        "serve",
+        "--port",
+        "8947"
+      ],
+      "env": {
+        "PERSISTPROC_PORT": "8947",
+        "PERSISTPROC_DATA_DIR": "${RE_BREAKER_PERSISTPROC_DATA_DIR:-${CLAUDE_PLUGIN_ROOT}/data/persistproc}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-ui-automate": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/vendored/touchpoint/.venv/bin/touchpoint-mcp",
+      "args": [],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "TOUCHPOINT_FALLBACK_INPUT": "true",
+        "TOUCHPOINT_FUZZY_THRESHOLD": "0.6",
+        "TOUCHPOINT_SCALE_FACTOR": "1.0"
+      }
+    },
+    "ssh-mcp": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/vendored/ssh-mcp/ssh-mcp",
+      "args": [
+        "--storage",
+        "${CLAUDE_PLUGIN_ROOT}/data/ssh-mcp/storage.db"
+      ],
+      "env": {}
+    },
+    "re-qemu-antidetect": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-qemu-antidetect",
+        "run",
+        "re-qemu-antidetect"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-target-fingerprint": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}/servers/re-target-fingerprint",
+        "run",
+        "re-target-fingerprint"
+      ],
+      "env": {
+        "RE_BREAKER_PLUGIN_ROOT": "${CLAUDE_PLUGIN_ROOT}",
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "re-orchestrator": {
+      "type": "stdio",
+      "command": "python3",
+      "args": [
+        "-m",
+        "re_orchestrator.server"
+      ],
+      "cwd": "RE_BREAKER_PLUGIN_ROOT/servers/re-orchestrator/src",
+      "env": {
+        "PYTHONPATH": "RE_BREAKER_PLUGIN_ROOT/servers/re-orchestrator/src",
+        "PYTHONUNBUFFERED": "1",
+        "RE_BREAKER_PLUGIN_ROOT": "RE_BREAKER_PLUGIN_ROOT"
+      }
+    }
+  }
+}

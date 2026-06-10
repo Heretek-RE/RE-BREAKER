@@ -1,0 +1,134 @@
+name: pattern-a-dw
+source: docs/PLAYBOOKS/pattern-a-dw-denuvo.md
+version: 0.2.0
+target_class: 'UE5 titles with Pattern A-DW (encrypted-VM bytecode interpreter + Denuvo
+  Anti-Tamper trigger-arm). Examples: **Persona 3 Reload** (P3R — the canonical A-DW
+  + Denuvo case from the v2.9.0 stress test).'
+catalog_entry: encrypted-vm.bytecode-interpreter.pattern-a-dw
+expected_runtime: 240 minutes (per-target static + dynamic; the Denuvo bypass is the
+  long pole)
+success_probability: 0.2
+tools:
+- re-anti-debug-patch
+steps:
+- number: 1
+  title: Confirm the target matches the pattern
+- number: 2
+  title: Establish the dynamic baseline (with GPU + Steam token)
+- number: 3
+  title: Bypass the POGO entry validation
+- number: 4
+  title: Patch the anti-debug primitives
+- number: 5
+  title: Spoof the hypervisor detection
+- number: 6
+  title: Lift the encrypted-VM dispatcher
+- number: 7
+  title: The Denuvo license check
+- number: 8
+  title: Document the result
+- number: 9
+  title: Known limitations / next iterations
+verify:
+- Section set intersects [`.arch`, `.sbss`, `.xcode`, `.xpdata`, `.xtext`, `.xtls`]
+  (the FULL A-DW section set)
+- Debug directory contains a POGO entry (type 10) of size >= 1000 bytes — this is
+  the Pattern A-DW differentiator from base Pattern A
+- '`re-anti-analysis` reports ≥ 30 VMCALL sites (Denuvo ATD characteristic)'
+- '`re-anti-analysis` reports ≥ 100 VMXON sites'
+- '`re-hypervisor-detect` reports `kernel-active` posture with 100+ VMX-EPT hits'
+- The breakpoint at the first RDTSC site hits before the anti-debug layer triggers
+- The RDTSC delta histogram (over 1000 samples) shows a bimodal distribution (normal
+  + trapped)
+- The trapped population is at the high-delta end (typically 1000+ cycles)
+- The POGO entry's return-value check is patched (the binary now returns 0 unconditionally)
+- The patched binary boots without triggering Denuvo's POGO-based exit
+- All 10 RDTSC sites patched to return 0
+- All 5 VMCALL sites patched to be no-ops
+- The patched binary boots without the RDTSC delta-trap triggering
+- All CPUID-leaf-1-ECX-bit-31 reads return 0
+- All CPUID-leaf-0x40000000-vendor reads return bare-metal vendor
+- All VMCALL probes are no-op'd
+- The POGO entry's hypervisor check (if any) is satisfied
+- The lifted IL has fewer than 2000 instructions (per-dispatcher for P3R's encrypted-VM
+  is larger than Pattern A base)
+- The simplified IL has at least 30% fewer instructions than the raw lift
+- The simplified IL has named basic blocks
+- The Denuvo license check returns "entitled" (the patched return value)
+- The binary continues past the license check
+- The binary does NOT phone home to the Denuvo entitlement server (verify by network
+  capture)
+- '**Denuvo ATD is the hardest commercial protection**. The 0.2 success_probability
+  reflects this — per-title bypass is months of work, no general solution.'
+- POGO entry payload is opaque; the public documentation of POGO is sparse. Future
+  iterations need the vendor's POGO interpreter.
+- Online entitlement check is still required; the binary's UE5 splash screen still
+  requires a valid license from the publisher's server.
+- Per-build breakable; needs re-run on every patch.
+- If the runtime-decrypted region is larger than 200MB (P3R's is borderline), the
+  lift may take 4-6 hours.
+- Denuvo's ATD layer may also detect the POGO bypass and exit. The realistic alternative
+  is to *not* bypass the POGO entry but instead to *emulate* the POGO entry's return
+  value in a sandbox.
+commands:
+- 're-static-triage --target=P3R.exe --output=/tmp/p3r-triage.json
+
+  re-anti-analysis --target=P3R.exe --output=/tmp/p3r-anti.json
+
+  re-hypervisor-detect --target=P3R.exe --output=/tmp/p3r-hyp.json
+
+  re-lief --get-debug-directory --target=P3R.exe'
+- 're-catalog-match --triage=/tmp/p3r-triage.json --intent=both
+
+  # Expect: encrypted-vm.bytecode-interpreter.pattern-a-dw (high confidence)
+
+  # Expect: anti-tamper-vendors.denuvo (very high confidence if ''denuvo'' string
+  is present)'
+- '# Wine + winedbg + gdb on Wine 11.0
+
+  re-winedbg --target=P3R.exe --port=0 --session=p3r-baseline
+
+
+  # Set RVA-aware breakpoint on the first RDTSC site
+
+  re-winedbg-set-bp --target=P3R.exe --rva=<first_rdtsc_rva> --session=p3r-baseline
+
+  re-winedbg-continue --session=p3r-baseline --timeout=15
+
+  re-winedbg-read-registers --session=p3r-baseline'
+- '# POGO entry is at image offset 84470104 (per the debug-directory read)
+
+  # The POGO entry is the trigger-arm signature; bypass by patching the entry''s
+
+  # return-value check to always return 0 (success)
+
+  re-patch --target=P3R.exe --offset=84470104 --strategy=pogo-bypass'
+- "# Identify and patch the first 10 RDTSC sites\nfor offset in $(jq -r '.byte_sequences[]\
+  \ | select(.primitive == \"RDTSC\") | .matches[:10] | .[]' /tmp/p3r-anti.json);\
+  \ do\n  re-anti-debug-patch --target=P3R.exe --offset=$offset --strategy=rdtsc-zero\n\
+  done\n\n# Identify and patch the first 5 VMCALL sites\nfor offset in $(jq -r '.byte_sequences[]\
+  \ | select(.primitive == \"VMCALL\") | .matches[:5] | .[]' /tmp/p3r-anti.json);\
+  \ do\n  re-anti-debug-patch --target=P3R.exe --offset=$offset --strategy=vmcall-noop\n\
+  done"
+- 're-anti-vm-spoof --snapshot-bare-metal --output=/tmp/cpuid-snapshot.json
+
+  re-anti-vm-spoof --target=P3R.exe --snapshot=/tmp/cpuid-snapshot.json --mode=frida'
+- 're-rizin --target=P3R.exe --find-dispatcher --encrypted-vm-family=pattern-a-dw
+
+  re-vtil --target=P3R.exe --dispatcher=<dispatcher_rva> --output=/tmp/p3r-dispatcher.il
+
+  re-vtil --il=/tmp/p3r-dispatcher.il --simplify=ollvm-default --output=/tmp/p3r-dispatcher-simplified.il'
+- '# Denuvo''s online license check is at the network level. The bypass primitive:
+
+  # (a) host-level firewall to block the Denuvo entitlement server
+
+  # (b) run the binary in an offline state
+
+  # (c) the binary''s Denuvo layer will detect the offline state and exit
+
+  # (d) the realistic alternative: patch the license check to return "entitled"
+
+  re-anti-debug-patch --target=P3R.exe --offset=<license_check_rva> --strategy=license-bypass'
+- "re-bypass-result --target=P3R.exe \\\n  --dispatcher-il=/tmp/p3r-dispatcher-simplified.il\
+  \ \\\n  --runtime-cost-minutes=240 \\\n  --catalog-match=encrypted-vm.bytecode-interpreter.pattern-a-dw\
+  \ \\\n  --output=/tmp/p3r-bypass-result.md"

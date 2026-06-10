@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-vm-ssh"
+version = "0.5.0"
+description = "RE-BREAKER re-vm-ssh server (v0.5.0). Paramiko-based SSH orchestration against the Windows VM: ssh_exec, ssh_file_put/get via the 9pfs Z: mount, ssh_tunnel_open/close (registry-backed) for the upstream MCP bridges, guest_status. Exposes client.py + tunnel.py so other VM servers can import the helpers."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+authors = [{name = "RE-BREAKER contributors"}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "paramiko>=3.4",
+]
+
+[project.scripts]
+re-vm-ssh = "re_vm_ssh.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

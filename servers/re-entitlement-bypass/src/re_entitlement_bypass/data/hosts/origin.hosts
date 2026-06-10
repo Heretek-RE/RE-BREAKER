@@ -1,0 +1,17 @@
+# Wine hosts file snippet — EA Origin
+# Per SOW-N (stress-test only, no SOW): in-lab protocol analysis in scope; production interaction prohibited.
+#
+# v0.5.2 — VERIFIED via disassembly + public EA Origin SDK docs
+# The Activation64.dll's 2 unnamed exports (ordinals 100 + 101) at RVA 0x7b10 +
+# 0x75c0 implement the canonical EA Activation function. The disassembly
+# confirms X.509 token parser infrastructure (X.509v3 Authority Key Identifier,
+# setct-AuthTokenTBE, setct-CapTokenTBE, EAJSON/TokenBuffer) + URL path
+# parsing (the 0x2f '/' and 0x5c '\' byte references at 0x180016c20). The
+# wire format matches the public EA Origin SDK + EA Atom protocol.
+# The 5 hostnames below are the documented EA Origin endpoints.
+
+127.0.0.1   auth.origin.com
+127.0.0.1   api.origin.com
+127.0.0.1   entitlement.origin.com
+127.0.0.1   activation.origin.com
+127.0.0.1   telemetry.origin.com

@@ -1,0 +1,85 @@
+name: pattern-c
+source: docs/PLAYBOOKS/ioi-glacier-shielding.md
+version: 0.2.0
+target_class: IO Interactive Glacier 2 / 007 First Light (and likely the rest of IOI's
+  recent titles).
+catalog_entry: encrypted-vm.bytecode-interpreter.unity-shielding-pdb-leak
+expected_runtime: 120 minutes
+success_probability: 0.5
+tools:
+- re-static-triage
+steps:
+- number: 1
+  title: The "shielding" PDB leak
+- number: 2
+  title: The Confluence URL leak (Pattern D side-effect)
+- number: 3
+  title: Confirm the protection surface
+- number: 4
+  title: Patch the anti-debug primitives
+- number: 5
+  title: Lift the encrypted-VM dispatcher
+- number: 6
+  title: Document the result
+- number: 7
+  title: Known limitations / next iterations
+verify:
+- The PDB path is `3. WindowsLauncher_shielding.pdb` (or similar — the project name
+  is "shielding")
+- The compiler is MSVC 14.29 (Visual Studio 2019)
+- The binary was built in 2026 (the build timestamp)
+- The Confluence URL is found
+- The URL is in the `TECH` space (IOI's internal Atlassian wiki)
+- The page ID is 5618628 (the "Base Tag Reference" page)
+- 1966 RDTSC sites (the v2.9.0 stress test finding)
+- 200+ CPUID sites
+- 200+ VMXON sites
+- 28 VMCALL sites
+- kernel-active hypervisor posture
+- 274MB .tls section (the anomalous size)
+- .data1 section with entropy 7.19 (encrypted)
+- The patched binary is 007FirstLight-patched.exe with ~2000+ patched sites
+- The patched binary boots without SIGABRT in the early-boot trace
+- The lifted IL has fewer than 1500 instructions (per-dispatcher for 007FL)
+- The simplified IL has at least 50% fewer instructions than the raw lift
+- The 274MB .tls section is anomalously large. May be a static-decrypted region that
+  requires a different runtime hook.
+- The IOI entitlement server (contacted via WinHTTP) is out of scope for this playbook.
+- The .data1 section entropy 7.19 indicates encrypted data; runtime decryption is
+  the only way to read it.
+- Per-build breakable.
+commands:
+- '# The launcher PDB path is the canonical finding
+
+  re-lief --categorize-strings --target=007FirstLight.exe --output=/tmp/007fl-strings.json
+
+  # Look for "WindowsLauncher_shielding.pdb" in the output
+
+  grep "shielding" /tmp/007fl-strings.json'
+- 'grep "ioicloud" /tmp/007fl-strings.json
+
+  # Expect: https://ioicloud.atlassian.net/wiki/spaces/TECH/pages/5618628/Base+Tag+Reference'
+- 're-static-triage --target=007FirstLight.exe --output=/tmp/007fl-triage.json
+
+  re-anti-analysis --target=007FirstLight.exe --output=/tmp/007fl-anti.json
+
+  re-hypervisor-detect --target=007FirstLight.exe --output=/tmp/007fl-hyp.json'
+- '# Patch ALL RDTSC sites (not just the first 10)
+
+  re-anti-debug-patch --target=007FirstLight.exe --strategy=rdtsc-zero-all
+
+  # Patch ALL VMXON sites
+
+  re-anti-debug-patch --target=007FirstLight.exe --strategy=vmxon-noop-all
+
+  # Patch ALL CPUID sites
+
+  re-anti-debug-patch --target=007FirstLight.exe --strategy=cpuid-spoof-all'
+- 're-rizin --target=007FirstLight.exe --find-dispatcher --encrypted-vm-family=pattern-a
+
+  re-vtil --target=007FirstLight.exe --dispatcher=<dispatcher_rva> --output=/tmp/007fl-dispatcher.il
+
+  re-vtil --il=/tmp/007fl-dispatcher.il --simplify=ollvm-default --output=/tmp/007fl-dispatcher-simplified.il'
+- "re-bypass-result --target=007FirstLight.exe \\\n  --dispatcher-il=/tmp/007fl-dispatcher-simplified.il\
+  \ \\\n  --runtime-cost-minutes=120 \\\n  --catalog-match=encrypted-vm.bytecode-interpreter.unity-shielding-pdb-leak\
+  \ \\\n  --output=/tmp/007fl-bypass-result.md"

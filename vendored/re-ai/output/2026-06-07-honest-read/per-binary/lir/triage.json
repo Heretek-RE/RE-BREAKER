@@ -1,0 +1,44 @@
+{
+  "run_id": "2026-06-07-honest-read",
+  "target_key": "lir",
+  "target_name": "Lost In Random (EA / Zoink, 2021)",
+  "engine": "Unity IL2CPP (Origin-shipped)",
+  "main_binary": "Input/il2cpp_sample/Lost In Random.exe",
+  "secondary_binaries": ["GameAssembly.dll (506MB, 16 sections, IL2CPP code)", "UnityPlayer.dll (28MB)", "Core/Activation.dll (2.5MB i386)", "Core/Activation64.dll (3MB x64) + .bak", "dbdata.dll (1MB)", "EA Installer/Support stack"],
+  "size_bytes": 663408,
+  "sha256": "31c930cef39ae228827d6fca102458f0ac3cd17b7e4bca265957efdeb41c63cd",
+  "imphash": "2cbaa87b264e40dc103127a4aa9c3bfe",
+  "is_pie": true,
+  "has_signature": true,
+  "has_debug": true,
+  "section_count_launcher": 8,
+  "section_count_gameassembly": 16,
+  "section_table_gameassembly": ".udata(4.4MB,entropy 6.32), .debug(36MB,6.57), .trace(10.7MB,5.25), .00cfg(2.9MB,3.61), .text(512B,0), .rdata(512B,0.16), .idata(470MB,6.77)**, .didata(55KB,4.78), .sdata(3.5KB,4.73), .tls(512B,2.95), .tls$(512B,2.73), .ecode(512B,4.65), .xtls(19KB,7.85)*, .xdata(19KB,5.37), .debug$P(2.2MB,6.95), .xpdata(3.9MB,6.41)",
+  "protection_class_launcher": "unpacked-debug-pe (EA-signed)",
+  "gameassembly_protection_class": "encrypted-vm-bytecode-interpreter (matched .xpdata, .xtls)",
+  "launcher_imports": "Only 2 imports: Core/Activation64.dll ordinals 100, 101 (Origin activation gate). 2 exports: AmdPowerXpress, NvOptimus.",
+  "anti_analysis_primitives": {
+    "launcher": {
+      "IsDebuggerPresent_string": 1,
+      "INT_2D": 1,
+      "INT_3_count_ge_200": true,
+      "CPUID": 1,
+      "INVD": 1,
+      "RDTSC": 0,
+      "VMXON": 0,
+      "VMCALL": 0
+    },
+    "GameAssembly_dll": {
+      "RDTSC_count_ge_200": true,
+      "INT_2D_count_ge_200": true,
+      "INT_3_count_ge_200": true,
+      "CPUID_count_ge_200": true,
+      "VMXON_count_ge_200": true,
+      "VMCALL": 32,
+      "INVD_count_ge_200": true,
+      "CPUID_hypervisor_leaf": 0
+    }
+  },
+  "string_table_matches": 0,
+  "notes": "EA-shipped Unity IL2CPP. 506MB GameAssembly.dll with 16 sections. .idata is 470MB (huge, W^X). The Origin activation gate is the launcher: only 2 imports, both from Core/Activation64.dll ordinals 100/101. The Origin stub-drop is the re-origin-stub-drop skill target (in scope this cycle, override-scope audit trail). Core/Activation64.dll.bak is analyst-instrumented. OriginSDK.dll + .ooa section (2048 bytes) are the stub-drop primitives."
+}

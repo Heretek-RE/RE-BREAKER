@@ -1,0 +1,105 @@
+name: ca-warscape-eos
+source: docs/PLAYBOOKS/ca-warscape-eos.md
+version: 0.2.0
+target_class: 'Creative Assembly Warscape / Empire engine titles with Epic Online
+  Services overlay. Example: **Total War Warhammer III v7.2.1** (TWW3).'
+expected_runtime: 90 minutes (the EOS bypass is trivial; the CA Warscape bypass is
+  medium)
+success_probability: 0.6
+tools:
+- re-runtime-dump
+steps:
+- number: 1
+  title: Bypass the EOS overlay (the easy part)
+- number: 2
+  title: Confirm the CA Warscape light VM
+- number: 3
+  title: Decrypt the .pack archives via libled.dll
+- number: 4
+  title: Write a Kaitai .ksy for the .pack format
+- number: 5
+  title: Apply the .ksy to data/data.pack
+- number: 6
+  title: Document the result
+- number: 7
+  title: Known limitations / next iterations
+verify:
+- The game launches without contacting the EOS auth server
+- Single-player mode is available without an EOS login
+- Section set intersects [`.link`, `.sbss`, `.xcode`]
+- The binary has `libled.dll` sibling (the CA "Light Encryption Driver" runtime-decryption
+  loader)
+- The binary has `EOSSDK-Win64-Shipping.dll` sibling (19MB)
+- The first .pack file decrypted is `data/boot.pack` (42KB)
+- The decrypted `boot.pack` has the CA Archive version-5 header
+- The `boot.pack` contains 30 timestamped files (per the v2.9.0 honest-read finding)
+- The .ksy parses `data/boot.pack` successfully
+- The parsed file_count matches the .pack's actual entry count (30 for boot.pack)
+- The .ksy parses `data/data.pack` successfully
+- The file_count is 13159 (per the v2.9.0 honest-read finding)
+- The TOC offset is reasonable (typically 0x100-0x10000)
+- The CA Clockwork mod-loading framework is intact. Bypassing its mod-allow/deny decision
+  is trivial (it's a developer-mode flag, not a security feature).
+- The `bypass_time.txt` flag disables the server-side time-limit check (this is a
+  separate opt-in, not part of the EOS bypass).
+- The CA Warscape light VM is a 3-section subset of the full encrypted-VM bytecode
+  interpreter family. The .text section is 65.7MB and the .impdata section is 138.5MB
+  (W^X). A full lift is medium-complexity.
+- Per-patch breakable; needs re-run on every CA update.
+commands:
+- '# Drop a .eos side-file in the game directory
+
+  echo "DEV_MODE=1" > "<installation_path>/game.eos"
+
+  # Or use the documented dev-mode escape hatch'
+- 're-static-triage --target=Warhammer3.exe --output=/tmp/tww3-triage.json
+
+  re-lief --classify-native-protection --target=Warhammer3.exe
+
+  # Expect: "encrypted-vm-bytecode-interpreter" with 3-section subset'
+- '# libled.dll''s runtime-decryption entry point: hook it
+
+  re-runtime-dump --target=Warhammer3.exe --mode=frida --output=/tmp/tww3-pack-decrypted/
+  --license-acknowledge --timeout=600
+
+
+  # The Frida hook:
+
+  # 1. Hook the libled.dll decryption function
+
+  # 2. Capture the AES key + IV + input path
+
+  # 3. Capture the decrypted output buffer
+
+  # 4. Write the decrypted .pack contents to /tmp/tww3-pack-decrypted/'
+- "# Use the boot.pack header as the .ksy template\n# The .pack format: [magic 4B][version\
+  \ 4B][file_count 4B][toc_offset 4B][toc_size 4B][flags 4B][TOC][files]\n# Write\
+  \ the .ksy:\ncat > /tmp/tww3-pack.ksy << 'EOF'\nseq:\n  - id: magic\n    contents:\
+  \ 'PACK'\n  - id: version\n    type: u4le\n  - id: file_count\n    type: u4le\n\
+  \  - id: toc_offset\n    type: u4le\n  - id: toc_size\n    type: u4le\n  - id: flags\n\
+  \    type: u4le\n  - id: toc\n    type: toc_entry\n    repeat: expr\n    repeat-expr:\
+  \ file_count\ntypes:\n  toc_entry:\n    seq:\n      - id: filename\n        type:\
+  \ strz\n      - id: offset\n        type: u8le\n      - id: size\n        type:\
+  \ u8le\n      - id: flags\n        type: u4le\nEOF\n\n# Compile the .ksy\nkaitai-struct-compiler\
+  \ --target python /tmp/tww3-pack.ksy\n\n# Apply the .ksy to data/boot.pack\nkaitai-struct-compiler\
+  \ --target python /tmp/tww3-pack.ksy\npython3 -c \"\nfrom tww3_pack import Tww3Pack\n\
+  import json\np = Tww3Pack.from_file('/tmp/tww3-pack-decrypted/boot.pack')\nprint(json.dumps(p,\
+  \ indent=2, default=str))\n\""
+- '# The big one: data/data.pack is 408MB and contains 13159 files
+
+  python3 -c "
+
+  from tww3_pack import Tww3Pack
+
+  p = Tww3Pack.from_file(''/tmp/tww3-pack-decrypted/data.pack'')
+
+  print(f''file_count: {p.file_count}'')
+
+  print(f''toc_offset: {p.toc_offset}'')
+
+  print(f''toc_size: {p.toc_size}'')
+
+  "'
+- "re-bypass-result --target=Warhammer3.exe \\\n  --pack-decrypted=/tmp/tww3-pack-decrypted/\
+  \ \\\n  --ksy=/tmp/tww3-pack.ksy \\\n  --runtime-cost-minutes=90 \\\n  --catalog-match=encrypted-vm.bytecode-interpreter.pattern-c\
+  \ \\\n  --output=/tmp/tww3-bypass-result.md"

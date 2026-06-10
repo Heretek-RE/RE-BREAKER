@@ -1,0 +1,89 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Per-server venvs (mirrors RE-AI's pattern)
+servers/*/.venv/
+servers/*/bin/python*
+servers/*/lib/
+
+# Compiled C/C++ injector artifacts
+inject/build/
+inject/src/**/*.o
+inject/src/**/*.so
+inject/src/**/*.dll
+inject/src/**/*.dylib
+inject/src/win/dll_inject.dll
+inject/src/linux/so_inject.so
+
+# Runtime dump output (regenerated per run)
+runtime-dumps/
+*.dump
+*.decrypted
+*.lifted
+
+# Acknowledgement cache (per-target, per-user, per-machine)
+.acknowledgement-cache/
+*acknowledged-targets*
+
+# Test artifacts
+tests/catalog/positive-fixtures/synthetic/*.bin
+tests/catalog/negative-fixtures/synthetic/*.bin
+*.test-input
+*.test-output
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+.pytest_cache/
+.tox/
+
+# Logs
+*.log
+logs/
+docs/RED-TEAM-MASTER-AGREEMENT.md
+Input/
+Output/
+data/ssh-mcp/storage.db/
+re-triage-output/
+inject/tests/*
+re-il2cpp-triage-output/
+# v0.8.0+: per-server output dirs (regenerated per run)
+re-anti-vm-spoof-output/
+servers/*/re-anti-vm-spoof-output/
+servers/*/re-vendor-anti-tamper-output/
+servers/*/re-injection-runtime-output/
+servers/*/re-frida-runtime-output/
+servers/*/re-patch-apply-output/

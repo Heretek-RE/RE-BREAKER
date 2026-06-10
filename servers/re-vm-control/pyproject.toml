@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-vm-control"
+version = "0.5.0"
+description = "RE-BREAKER re-vm-control server (v0.5.0). Libvirt + QEMU control: list/start/stop VM, snapshot create/revert/delete/list, raw QMP passthrough, attach_gdb_stub (modifies VM XML, restarts), SPICE screendump, NMI injection. The driver for the rest of the native-Windows-VM toolchain."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+authors = [{name = "RE-BREAKER contributors"}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "libvirt-python>=12.0",
+]
+
+[project.scripts]
+re-vm-control = "re_vm_control.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

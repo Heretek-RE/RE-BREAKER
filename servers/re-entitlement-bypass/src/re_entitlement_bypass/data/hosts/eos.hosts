@@ -1,0 +1,12 @@
+# Wine hosts file snippet — Epic Online Services handshake
+# Per SOW-K §K.2 + SOW-Q §Q.1: in-lab protocol analysis in scope; production
+# interaction prohibited.
+# Add these lines to ${WINEPREFIX}/drive_c/windows/system32/drivers/etc/hosts
+# (or symlink to a project-local file and override the Wine system32 path).
+
+127.0.0.1   api.epicgames.dev
+127.0.0.1   eos.epicgames.com
+127.0.0.1   api.epicgames.com
+127.0.0.1   eos-ic.epicgames.com
+127.0.0.1   eos-auth.epicgames.com
+127.0.0.1   eos-ecom.epicgames.com

@@ -1,0 +1,8 @@
+# Wine hosts file snippet — IOI Account
+# Per SOW-L §L.6: in-lab protocol analysis in scope; production interaction prohibited.
+
+127.0.0.1   account.ioi.dk
+127.0.0.1   api.ioi.dk
+127.0.0.1   entitlement.ioi.dk
+127.0.0.1   auth.ioi.dk
+127.0.0.1   telemetry.ioi.dk

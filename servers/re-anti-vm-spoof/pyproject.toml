@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-anti-vm-spoof"
+version = "0.4.0"
+description = "RE-BREAKER re-anti-vm-spoof server — see https://github.com/Heretek-RE/RE-BREAKER for the charter."
+requires-python = ">=3.11"
+authors = [{name = "RE-BREAKER contributors"}]
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+]
+[project.scripts]
+re-anti-vm-spoof = "re_anti_vm_spoof.server:main"
+[tool.setuptools.packages.find]
+where = ["src"]
+[tool.setuptools.package-dir]
+"" = "src"

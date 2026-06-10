@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-breaker"
+version = "0.6.0"
+description = "Offense-research toolkit for defeating anti-reverse-engineering protection. v0.6.0: 28 MCP servers. v0.6.0 vendors 3 external upstreams (persistproc, touchpoint, ssh-mcp) and adds re-persistproc as a sidecar. re-launch-and-observe gains persistproc-backed ffmpeg with cross-restart persistence; re-vm-launch, re-vm-ssh, and re-vm-control gain disk-persistence for their in-process registries. Pairs the existing Wine + winedbg stack with a real Win11 libvirt KVM guest."
+readme = "README.md"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+requires-python = ">=3.11"
+keywords = [
+    "re", "reverse-engineering", "anti-tamper", "anti-debug", "anti-vm",
+    "encrypted-vm", "bypass", "malware-analysis", "offensive-research",
+    "vmprotect", "themida", "denuvo", "starforce", "arxan",
+    "rdtsc", "cpuid", "vmx", "frida", "speakeasy", "sogen",
+]
+authors = [
+    {name = "RE-BREAKER contributors"},
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: C",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Security",
+    "Topic :: Software Reverse Engineering",
+]
+
+# Core RE-BREAKER Python deps
+dependencies = [
+    "mcp[cli]>=1.2",     # MCP server framework
+    "pydantic>=2.6",     # Server config models
+    "httpx>=0.28",      # For talking to RE-AI's MCP servers (if needed)
+    "httpx-sse>=0.4",   # For the v0.5.0 MCP bridges (ida-pro-mcp / ghidra-mcp / x64dbg-mcp SSE)
+    "paramiko>=3.4",    # For the v0.5.0 re-vm-ssh paramiko-based SSH orchestration
+    "libvirt-python>=12.0",  # For the v0.5.0 re-vm-control / re-vm-memory libvirt bindings
+    "PyYAML>=6.0",      # For the catalog + playbook YAML parsing
+]
+
+# Optional integration deps (RE-AI is a git+https dependency, not a PyPI one)
+[project.optional-dependencies]
+re_ai_integration = ["re-ai-mcp @ git+https://github.com/Heretek-RE/RE-AI.git"]
+sogen = ["sogen-emulator @ git+https://github.com/momo5502/sogen.git"]
+frida = ["frida>=17.0", "frida-tools>=17.0"]
+speakeasy = ["speakeasy-emulator>=1.5"]
+capa = ["flare-capa>=9.0"]
+angr = ["angr>=9.2", "cle>=9.2"]
+all = [
+    "re-ai-mcp @ git+https://github.com/Heretek-RE/RE-AI.git",
+    "sogen-emulator @ git+https://github.com/momo5502/sogen.git",
+    "frida>=17.0", "frida-tools>=17.0",
+    "speakeasy-emulator>=1.5",
+    "flare-capa>=9.0",
+    "angr>=9.2", "cle>=9.2",
+]
+
+[project.scripts]
+# The unified CLI
+re-dump = "re_breaker.cli.re_dump:main"
+re-catalog-match = "re_breaker.cli.re_catalog_match:main"
+re-anti-debug-patch = "re_breaker.cli.re_anti_debug_patch:main"
+re-anti-vm-spoof = "re_breaker.cli.re_anti_vm_spoof:main"
+re-vm-decrypt = "re_breaker.cli.re_vm_decrypt:main"
+re-encrypted-vm-bypass = "re_breaker.cli.re_encrypted_vm_bypass:main"
+re-vendor-anti-tamper = "re_breaker.cli.re_vendor_anti_tamper:main"
+
+[project.urls]
+"Homepage" = "https://github.com/Heretek-RE/RE-BREAKER"
+"Bug Tracker" = "https://github.com/Heretek-RE/RE-BREAKER/issues"
+"RE-AI" = "https://github.com/Heretek-RE/RE-AI"
+"RE-Library" = "https://github.com/Heretek-RE/RE-Library"
+"RE-UNLEASHED" = "https://github.com/Heretek-RE/RE-UNLEASHED"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

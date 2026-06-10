@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-winedbg"
+version = "0.4.0"
+description = "RE-BREAKER Wine + winedbg + gdb + GEF wrapper (v0.4.0). Port of RE-AI's 30-tool dynamic-analysis server. Uses `winedbg --gdb` over stdio (the Wine 11+ path) and gdb's MI interface. 30 tools exposed: launch_under_wine, start_winedbg_gdbserver, attach_winedbg_gdbserver, set_breakpoint, read_memory, write_memory, info_modules, gef_trace_breakpoint, gef_pattern_search, gef_ropper_search, etc."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0 + Offensive-Research-Use Clause"}
+authors = [{name = "Heretek-AI, Inc."}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+]
+
+[project.scripts]
+re-winedbg = "re_winedbg.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

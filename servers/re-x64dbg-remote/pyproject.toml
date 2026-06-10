@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-x64dbg-remote"
+version = "0.5.2"
+description = "RE-BREAKER re-x64dbg-remote server (v0.5.2 FULLY IMPLEMENTED). Thin MCP proxy to AgentSmithers/x64DbgMCPServer running in the Windows VM. x64dbg is GUI-only; we launch it headless via Windows start /B with the target on the command line, and the DP64 plugin auto-starts the HTTP+SSE listener on 127.0.0.1:50300. 11 tools: status, start/stop, attach_to_pid, set_breakpoint, read_memory, read_registers, step_into, step_over, continue_execution, dump_module, execute_command. Uses the shared re-vm-bridge package."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+authors = [{name = "RE-BREAKER contributors"}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "httpx>=0.28",
+    "httpx-sse>=0.4",
+    "re-vm-ssh",
+]
+
+[project.scripts]
+re-x64dbg-remote = "re_x64dbg_remote.server:main"
+
+# v0.5.8: resolve re-vm-ssh from the local sibling server (not PyPI)
+[tool.uv.sources]
+re-vm-ssh = { path = "../re-vm-ssh" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

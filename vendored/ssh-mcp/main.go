@@ -1,0 +1,95 @@
+package main
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"os"
+	"os/signal"
+	"path"
+	"syscall"
+
+	"github.com/mark3labs/mcp-go/server"
+	"github.com/spf13/cobra"
+
+	"github.com/blakerouse/ssh-mcp/commands"
+	"github.com/blakerouse/ssh-mcp/storage"
+	"github.com/blakerouse/ssh-mcp/tools"
+)
+
+var rootCmd = &cobra.Command{
+	Use:   "ssh-mcp",
+	Short: "SSH-MCP is a tool that allows you to manage remote machines over SSH with AI.",
+	Run: func(cmd *cobra.Command, args []string) {
+		// Start the server
+		err := run(cmd)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
+		}
+	},
+}
+
+func init() {
+	rootCmd.PersistentFlags().String("storage", "", "Storage path for hosts (default: ~/.ssh-mcp/storage.db)")
+}
+
+func main() {
+	err := rootCmd.Execute()
+	if err != nil && !errors.Is(err, context.Canceled) {
+		fmt.Printf("Error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func run(cmd *cobra.Command) error {
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer cancel()
+
+	storagePath := cmd.Flag("storage").Value.String()
+	if storagePath == "" {
+		// Default to ~/.ssh-mcp/storage.db
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return fmt.Errorf("failed to get user home directory: %w", err)
+		}
+		storagePath = path.Join(homeDir, ".ssh-mcp", "storage.db")
+	}
+	err := os.MkdirAll(path.Dir(storagePath), 0700)
+	if err != nil {
+		return fmt.Errorf("failed to create storage directory: %w", err)
+	}
+	storageEngine, err := storage.NewEngine(storagePath)
+	if err != nil {
+		return fmt.Errorf("failed to create storage engine: %w", err)
+	}
+	defer storageEngine.Close()
+
+	// Create runner for background command execution
+	commandRunner := commands.NewRunner()
+
+	// Cancel all running commands when context is cancelled
+	go func() {
+		<-ctx.Done()
+		commandRunner.CancelAllCommands()
+	}()
+
+	s := server.NewMCPServer(
+		"SSH",
+		"0.1.0",
+		server.WithToolCapabilities(true),
+		server.WithRecovery(),
+	)
+
+	for _, tool := range tools.Registry.Tools() {
+		// Set command runner for tools that support background execution
+		if commandRunnerAware, ok := tool.(tools.CommandRunnerAware); ok {
+			commandRunnerAware.SetCommandRunner(commandRunner)
+		}
+		s.AddTool(tool.Definition(), tool.Handler(ctx, storageEngine))
+	}
+
+	// start the stdio server
+	stdio := server.NewStdioServer(s)
+	return stdio.Listen(ctx, os.Stdin, os.Stdout)
+}

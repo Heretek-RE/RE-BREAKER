@@ -1,0 +1,12 @@
+# Wine hosts file snippet — SEGA Sports Interactive SSO / entitlement
+# Per SOW-M: in-lab protocol analysis in scope; production interaction prohibited.
+
+127.0.0.1   accounts.sega.com
+127.0.0.1   account.sega.com
+127.0.0.1   ssega.com
+127.0.0.1   auth.ssega.com
+127.0.0.1   entitlement.sega.com
+127.0.0.1   fm.sega.com
+127.0.0.1   sso.segasoftware.com
+127.0.0.1   api.segasoftware.com
+127.0.0.1   sigames.segasoftware.com

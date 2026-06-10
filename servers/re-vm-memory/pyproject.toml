@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-vm-memory"
+version = "0.5.1"
+description = "RE-BREAKER re-vm-memory server (v0.5.1 FULLY IMPLEMENTED). Bulk guest memory ops via QMP: dump_phys_range (pmemsave), dump_virt_range (CR3 page-walk + pmemsave), search_phys (dump + grep), hash_phys_range (sha256 for known-clean snapshot integrity checks), diff_snapshots (destructive revert path). 6 tools, all real."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+authors = [{name = "RE-BREAKER contributors"}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "libvirt-python>=12.0",
+]
+
+[project.scripts]
+re-vm-memory = "re_vm_memory.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

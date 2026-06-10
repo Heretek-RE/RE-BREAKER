@@ -1,0 +1,2 @@
+"""RE-BREAKER Frida-on-Wine runtime (v0.4.0)."""
+__version__ = "0.4.0"

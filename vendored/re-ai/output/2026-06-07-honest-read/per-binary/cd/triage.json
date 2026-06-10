@@ -1,0 +1,49 @@
+{
+  "run_id": "2026-06-07-honest-read",
+  "target_key": "cd",
+  "target_name": "Crimson Desert (Pearl Abyss BlackSpace Engine)",
+  "engine": "BlackSpace Engine (Pearl Abyss proprietary)",
+  "main_binary": "Input/proprietary_engine_target/steamapps/common/Crimson Desert/bin64/CrimsonDesert.exe",
+  "secondary_binaries": ["AMD FidelityFX stack (denoiser, frame-gen, upscaler, loader)", "libxess.dll (78MB XeSS)", "libxess_fg.dll (23MB XeSS frame gen)", "gfsdk_aftermath_lib.x64.dll (NVIDIA Aftermath)", "hermessdkcorewrapper_release.dll (4MB)", "librdkafka.dll (3.6MB) + librdkafkacpp.dll (96KB) (telemetry)", "libeay32.dll (2MB OpenSSL 1.0.2)", "crashpad_handler.exe", "dxcompiler.dll, dxil.dll, expat.dll, gvc.dll, libpng18.dll, libzstd.dll, ngfx_injection.dll (NVIDIA), libxell.dll, cdt.dll, cgraph.dll, boost_system/thread-vc140-mt-x64-1_68.dll"],
+  "size_bytes": 408667032,
+  "sha256": "b2d5cc4d085bfc835548684c6572761ce33c543496ded28fb759fcfa22197a33",
+  "imphash": "7857e8f05f576800046663c67fad5137",
+  "is_pie": false,
+  "has_signature": true,
+  "has_debug": true,
+  "section_count": 12,
+  "section_table": ".arch(73.7MB,entropy 6.75)**, .link(21.4MB,5.54), .xcode(3.5MB,6.36), .srdata(2.7MB,0), .reloc(12KB,5.66), .idata(197KB,6.85), .text(1.7MB,5.45), .rodata(300.8MB,6.73)***, .rdata(1.9MB,2.53), .rsrc(1KB,2.91), .xtext(36KB,5.86), .sbss(2.7MB,7.30)",
+  "protection_class": "encrypted-vm-handler-table-dispatch (Pattern A-VMT canonical - new pattern from v2.9.0 stress test)",
+  "protection_evidence": {
+    "section_set_match": ".arch, .link, .rodata, .xcode",
+    "dual_regime_signature": {
+      "dispatch_table_head_entropy": 3.225,
+      "encrypted_metadata_entropy": 7.2,
+      "dispatch_table_struct_probe": true
+    }
+  },
+  "anti_analysis_primitives": {
+    "RDTSC_count_ge_200": true,
+    "INT_2D_count_ge_200": true,
+    "INT_3_count_ge_200": true,
+    "CPUID_count_ge_200": true,
+    "VMXON_count_ge_200": true,
+    "VMCALL": 26,
+    "INVD_count_ge_200": true,
+    "CPUID_hypervisor_leaf": 0
+  },
+  "hypervisor_posture": "kernel-active (201 CPUID leaves, 136 VMX-EPT hits, 2390 RDTSC, 0 registry, 1 SMBIOS/ACPI)",
+  "debug_directory": {
+    "backend": "lief.debug",
+    "debug_entries": 4,
+    "has_pogo_entry": true,
+    "has_codeview_entry": true,
+    "has_iltcg_entry": true,
+    "pogo_entry_size_bytes": 1220,
+    "codeview_entry_size_bytes": 84,
+    "iltcg_entry_size_bytes": 0,
+    "codeview_timestamp": 1779983484
+  },
+  "string_table_matches": 0,
+  "notes": "Crimson Desert is the canonical Pattern A-VMT case (encrypted-VM handler-table dispatch - NOT a bytecode interpreter). The .arch section is 73.7MB (largest section), .rodata is 300.8MB (massive - holds the encrypted metadata region). Two-regime .xcode layout: low-entropy dispatch table (head entropy 3.225) + high-entropy encrypted metadata (entropy 7.2). The .srdata section is 2.7MB with entropy 0 (statically-decrypted BSS). Statically-linked OpenSSL (libeay32.dll, 2MB) provides AES-NI / SHA-512 / VPAES. Hermes SDK core wrapper (4MB) for telemetry. librdkafka (3.6MB) is a real streaming-pipeline client - confirmed telemetry surface. POGO + ILTCG entries present - matches the v2.9.0 stress test finding."
+}

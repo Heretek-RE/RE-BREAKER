@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build_backend = "setuptools.build_meta"
+
+[project]
+name = "re-cinematic-skip"
+version = "0.1.0"
+description = "RE-BREAKER re-cinematic-skip server — Wine-side patch + runtime hook to auto-dismiss Unity / Sports Interactive / Pearl Abyss splash cinemáticos that wait for input in headless mode. Built to defeat the v0.4.1.9 cinematic-wall failure-mode (FM26, HKIA, P3R, CD, TWW3 all hit this)."
+requires-python = ">=3.11"
+authors = [{name = "RE-BREAKER contributors"}]
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "pefile>=2023.2.7",
+]
+[project.scripts]
+re-cinematic-skip = "re_cinematic_skip.server:main"
+[tool.setuptools.packages.find]
+where = ["src"]
+[tool.setuptools.package-dir]
+"" = "src"

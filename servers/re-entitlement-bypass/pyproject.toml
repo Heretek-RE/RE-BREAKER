@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-entitlement-bypass"
+version = "0.5.2"
+description = "RE-BREAKER re-entitlement-bypass server — unified orchestrator for Steam CEG, EOS handshake, IOI Account, SEGA SSO, Atlus, Sunblink, Pearl Abyss, and EA Origin entitlement layers. v0.5.2 replaces the Atlus + Origin SCAFFOLDs with REAL endpoints (5 each) derived from the public Atlus Network API docs + the disassembly of Activation64.dll's 2 unnamed exports + the public EA Origin SDK docs. See https://github.com/Heretek-RE/RE-BREAKER for the charter."
+requires-python = ">=3.11"
+authors = [{name = "RE-BREAKER contributors"}]
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "cryptography>=42.0",
+]
+[project.scripts]
+re-entitlement-bypass = "re_entitlement_bypass.server:main"
+re-ee = "re_entitlement_bypass.cli.emulate:main"
+[tool.setuptools.packages.find]
+where = ["src"]
+[tool.setuptools.package-dir]
+"" = "src"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]

@@ -1,0 +1,29 @@
+name: il2cpp-triage
+source: skills/re-il2cpp-triage/SKILL.md
+version: 0.3.0
+when_to_use: Target is a Unity IL2CPP launcher (~660KB), the companion GameAssembly.dll
+  has the encrypted-VM bytecode interpreter
+target_class: Unity 6 / 2022.3 LTS / older Unity games (FM26, HKIA, LIR, P3R)
+catalog_entry: n/a (workflow, redirects to Pattern A / A-DW / A-VMT)
+expected_runtime_minutes: 5
+success_probability: 0.85
+tools:
+- re-il2cpp-triage
+- re-catalog-match
+- re-vm-decrypt
+- re-anti-analysis-scan
+steps:
+- step: 1
+  tool: re-il2cpp-triage
+  action: auto_detect + triage_il2cpp on the launcher
+  purpose: find GameAssembly.dll + global-metadata.dat + il2cpp.usym; run re-triage
+    on the .dll
+- step: 2
+  tool: re-catalog-match
+  action: match_catalog with main_binary=GameAssembly.dll
+  purpose: rank catalog entries against the .dll's triage (which has the encrypted-VM
+    section set + anti-debug primitives)
+- step: 3
+  tool: re-vm-decrypt
+  action: decrypt_target with pattern=Pattern A
+  purpose: plan the encryption-stub hook + per-method binary dump

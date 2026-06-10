@@ -1,0 +1,94 @@
+name: pattern-a-vmt
+source: docs/PLAYBOOKS/pattern-a-vmt-blackspace.md
+version: 0.2.0
+target_class: 'Pearl Abyss BlackSpace Engine titles. Example: **Crimson Desert** (CD
+  — the canonical Pattern A-VMT case from the v2.9.0 stress test).'
+catalog_entry: encrypted-vm.bytecode-interpreter.pattern-a-vmt
+expected_runtime: 180 minutes
+success_probability: 0.5
+tools:
+- re-vm-decrypt
+steps:
+- number: 1
+  title: Confirm the target matches the pattern
+- number: 2
+  title: Read the .xcode dispatch table
+- number: 3
+  title: Resolve the handler targets in .link (the hard part)
+- number: 4
+  title: Reconstruct the handler table
+- number: 5
+  title: Lift each handler to readable IL
+- number: 6
+  title: Document the result
+- number: 7
+  title: Known limitations / next iterations
+verify:
+- Section set intersects [`.arch`, `.link`, `.xcode`, `.xtext`, `.sbss`]
+- '`.xcode` has the dual-regime signature: low-entropy head (dispatch table) + high-entropy
+  tail (encrypted metadata)'
+- Debug directory contains a POGO entry AND an ILTCG entry (the dual-tell is the A-VMT
+  differentiator from A-DW)
+- The first N entries have a non-zero `handler_id` and a non-zero `target`
+- The `target` values are RVA-like (typically in the range 0x10000000-0xFFFFFFFF for
+  a 32-bit RVA, or 0x140000000+ for a 64-bit RVA)
+- The Frida trace shows `CreateFileW` being called on `data.xpac` or similar
+- The .link section at runtime is writable (it was read-only on disk; the runtime
+  decryption patches it in-place)
+- The decrypted handler bodies are between 4KB and 100KB each
+- Each handler body is at least 4KB (handlers smaller than this are likely placeholders
+  or stub)
+- No two handlers have identical bodies (this would indicate a deduplication scheme,
+  which BlackSpace doesn't use)
+- The aggregated handler-table view has all 4096 (or however many) handlers listed
+- 'Each handler is named in the view (e.g. "handler_0001: addition", "handler_0002:
+  subtraction", ...)'
+- The handler-table view is human-readable
+- The .link runtime-decryption requires GPU + valid Pearl Abyss account (librdkafka
+  telemetry publishes a handshake at boot). Need a fully-functional environment for
+  the lift to succeed.
+- 'Hermes SDK + librdkafka telemetry surface: capture the publish topics and payloads
+  as a side-effect of the bypass (see Pattern D catalog entry).'
+- The .arch section (73.7MB) is the static x86_64 code; the .link is the runtime-decrypted
+  data. The two together form the full BlackSpace engine.
+commands:
+- 're-static-triage --target=CrimsonDesert.exe --output=/tmp/cd-triage.json
+
+  re-lief --classify-native-protection --target=CrimsonDesert.exe
+
+  # Expect: "encrypted-vm-handler-table-dispatch" (the new Pattern A-VMT class)'
+- "# Extract the .xcode section\nre-lief --extract-section --target=CrimsonDesert.exe\
+  \ --section=.xcode --output=/tmp/cd-xcode.bin\n\n# The dispatch table is in the\
+  \ low-entropy head. The entries are 16-byte big-endian:\n#   [u32 handler_id][u32\
+  \ reserved=0][u64 target]\n# Use re-triton or a simple script to parse the table\n\
+  python3 -c \"\nimport struct\ndata = open('/tmp/cd-xcode.bin', 'rb').read()\nfor\
+  \ i in range(0, min(8192, len(data)), 16):\n    hid, reserved, target = struct.unpack('>IIQ',\
+  \ data[i:i+16])\n    if hid == 0 and reserved == 0 and target == 0:\n        break\n\
+  \    print(f'  handler {hid}: target 0x{target:x}')\n\""
+- '# The .link section contains the runtime-decrypted handler bodies
+
+  # At boot, BlackSpace decrypts .arch (the handler bodies) and patches them into
+  .link
+
+  # To capture the runtime-decrypted .link, use Frida
+
+  re-runtime-dump --target=CrimsonDesert.exe --mode=frida --output=/tmp/cd-link-decrypted/
+  --license-acknowledge --timeout=600'
+- "# For each handler in the dispatch table, look up the corresponding decrypted body\
+  \ in .link\npython3 -c \"\nimport struct\nxcode = open('/tmp/cd-xcode.bin', 'rb').read()\n\
+  link_decrypted = open('/tmp/cd-link-decrypted/decrypted.bin', 'rb').read()\n\n#\
+  \ The target in the dispatch table is a RVA. Resolve it to a .link offset\n# (this\
+  \ is engine-specific; check BlackSpace's source or just brute-force)\n\nfor i in\
+  \ range(0, min(8192, len(xcode)), 16):\n    hid, reserved, target_rva = struct.unpack('>IIQ',\
+  \ xcode[i:i+16])\n    if hid == 0:\n        break\n    # Map target_rva to link_decrypted\
+  \ offset\n    body = link_decrypted[target_rva:target_rva+8192]\n    # Write the\
+  \ handler body to a separate file\n    with open(f'/tmp/cd-handler-{hid:04x}.bin',\
+  \ 'wb') as f:\n        f.write(body)\n    print(f'  handler {hid:04x}: rva 0x{target_rva:x},\
+  \ wrote {len(body)} bytes')\n\""
+- "# Lift each handler to IL\nfor hid in $(ls /tmp/cd-handler-*.bin); do\n  re-vtil\
+  \ --target=$hid --output=${hid%.bin}.il --simplify=ollvm-default\ndone\n\n# Aggregate\
+  \ the lifted IL into a single handler-table view\nre-runtime-dump --aggregate-handlers\
+  \ --input=/tmp/cd-handler-*.il --output=/tmp/cd-handler-table.md"
+- "re-bypass-result --target=CrimsonDesert.exe \\\n  --handler-table=/tmp/cd-handler-table.md\
+  \ \\\n  --runtime-cost-minutes=180 \\\n  --catalog-match=encrypted-vm.bytecode-interpreter.pattern-a-vmt\
+  \ \\\n  --output=/tmp/cd-bypass-result.md"

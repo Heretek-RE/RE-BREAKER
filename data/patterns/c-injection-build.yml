@@ -1,0 +1,28 @@
+name: c-injection-build
+source: skills/re-c-injection-build/SKILL.md
+version: 0.3.0
+when_to_use: Target has hardened anti-Frida checks. Operator wants in-process hooks
+  (not Frida).
+target_class: Denuvo ATD + EAC/BE kernel drivers + proprietary anti-RE wrappers (007FL,
+  P3R Denuvo, CD BlackSpace)
+catalog_entry: n/a (workflow)
+expected_runtime_minutes: 10
+success_probability: 0.9
+tools:
+- re-c-injection-build
+- re-runtime-dump (--mode=inject)
+steps:
+- step: 1
+  tool: re-c-injection-build
+  action: build_injection_library target_os=linux
+  purpose: compile the .so with the inline-trampoline hook engine + IAT/GOT override
+    + Unix-socket IPC
+- step: 2
+  tool: re-c-injection-build
+  action: build_injection_library target_os=windows
+  purpose: compile the .dll (requires mingw)
+- step: 3
+  tool: re-runtime-dump
+  action: dump_target --mode=inject
+  purpose: actually inject the .so/.dll into the target + install the hooks + capture
+    the dumps

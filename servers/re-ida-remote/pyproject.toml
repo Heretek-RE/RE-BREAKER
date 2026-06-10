@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-ida-remote"
+version = "0.5.2"
+description = "RE-BREAKER re-ida-remote server (v0.5.2 FULLY IMPLEMENTED). Thin MCP proxy to mrexodia/ida-pro-mcp running in the Windows VM. Starts the upstream via SSH (idalib-mcp --transport http://127.0.0.1:8744/sse), opens a Linux-side tunnel on 127.0.0.1:18744, and forwards MCP requests. 9 tools: status, start/stop, list_databases, decompile_function, rename_function, list_imports, list_strings, add_breakpoint, proxy_tool. Uses the shared re-vm-bridge package."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "AGPL-3.0-or-later with Offensive-Research-Use Clause"}
+authors = [{name = "RE-BREAKER contributors"}]
+
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "httpx>=0.28",
+    "httpx-sse>=0.4",
+    "re-vm-ssh",  # for start the upstream + tunnel
+]
+
+[project.scripts]
+re-ida-remote = "re_ida_remote.server:main"
+
+# v0.5.8: resolve re-vm-ssh from the local sibling server (not PyPI)
+[tool.uv.sources]
+re-vm-ssh = { path = "../re-vm-ssh" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

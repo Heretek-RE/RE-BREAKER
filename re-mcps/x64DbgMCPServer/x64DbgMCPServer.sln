@@ -1,0 +1,69 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetPlugin.Stub", "DotNetPlugin.Stub\DotNetPlugin.Stub.csproj", "{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetPlugin.Impl", "DotNetPlugin.Impl\DotNetPlugin.Impl.csproj", "{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetPlugin.RemotingHelper", "DotNetPlugin.RemotingHelper\DotNetPlugin.RemotingHelper.csproj", "{CF3CB686-DD3D-4782-9192-8195A968DC09}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Global", "Global", "{93EAEA47-7B3E-4F65-9D11-A2C8F00071DD}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Debug|Any CPU.Build.0 = Debug|x64
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Debug|x64.ActiveCfg = Debug|x64
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Debug|x64.Build.0 = Debug|x64
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Debug|x86.ActiveCfg = Debug|x86
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Debug|x86.Build.0 = Debug|x86
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Release|Any CPU.ActiveCfg = Release|x64
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Release|Any CPU.Build.0 = Release|x64
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Release|x64.ActiveCfg = Release|x64
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Release|x64.Build.0 = Release|x64
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Release|x86.ActiveCfg = Release|x86
+		{F2F8BA6A-0112-47CA-9AFA-E8082263AB72}.Release|x86.Build.0 = Release|x86
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Debug|Any CPU.Build.0 = Debug|x64
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Debug|x64.ActiveCfg = Debug|x64
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Debug|x64.Build.0 = Debug|x64
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Debug|x86.ActiveCfg = Debug|x86
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Debug|x86.Build.0 = Debug|x86
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Release|Any CPU.ActiveCfg = Release|x64
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Release|Any CPU.Build.0 = Release|x64
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Release|x64.ActiveCfg = Release|x64
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Release|x64.Build.0 = Release|x64
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Release|x86.ActiveCfg = Release|x86
+		{3F05E028-6436-4F1C-ABAF-5E7CFBFCB7D7}.Release|x86.Build.0 = Release|x86
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Debug|Any CPU.Build.0 = Debug|x64
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Debug|x64.ActiveCfg = Debug|x64
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Debug|x64.Build.0 = Debug|x64
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Debug|x86.ActiveCfg = Debug|x86
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Debug|x86.Build.0 = Debug|x86
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Release|Any CPU.ActiveCfg = Release|x64
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Release|Any CPU.Build.0 = Release|x64
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Release|x64.ActiveCfg = Release|x64
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Release|x64.Build.0 = Release|x64
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Release|x86.ActiveCfg = Release|x86
+		{CF3CB686-DD3D-4782-9192-8195A968DC09}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04FC09BA-059D-44FA-A886-0B8E3C34B00F}
+	EndGlobalSection
+EndGlobal

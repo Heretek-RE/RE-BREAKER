@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "re-yara"
+version = "0.1.0"
+description = "MCP server wrapping the YARA pattern-matching engine for binary triage: compile user-supplied rule directories and scan files / directories against them. Ships zero rules; the analyst provides them."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+keywords = [
+    "mcp",
+    "yara",
+    "pattern-matching",
+    "binary-triage",
+    "reverse-engineering",
+    "rule-engine",
+]
+authors = [{name = "John"}]
+dependencies = [
+    "mcp[cli]>=1.2",
+    "pydantic>=2.6",
+    "yara-python>=4.3",
+]
+
+[project.scripts]
+re-yara = "re_yara.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
